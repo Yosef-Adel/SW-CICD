@@ -13,9 +13,7 @@ pipeline {
                 git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project'
                     withCredentials([gitUsernamePassword(credentialsId: 'SW-GitHub',
-                    gitToolName: 'git-hub')]) {
-                        sh 'git fetch --all'
-                    }
+                    gitToolName: 'git-hub')]) 
             }
         }
         stage('Clean') {
