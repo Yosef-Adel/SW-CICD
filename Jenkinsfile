@@ -94,10 +94,10 @@ pipeline {
            withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
           sh '''
             aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
+              --template-file  files/backend.yml \
               --tags Project=udapeople \
-              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+              --stack-name "udapeople-backend-${BUILD_ID}" \
+              --parameter-overrides ID="${BUILD_ID}"  
           '''
         }
            }
