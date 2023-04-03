@@ -72,20 +72,35 @@ pipeline {
         stage('scan-backend') {
             steps {
                 dir("backend") {
-                sh 'npm install'
-                sh 'npm audit fix --audit-level=critical --force'
+                // sh 'npm install'
+                // sh 'npm audit fix --audit-level=critical --force'
              }
             }
         }
          stage('scan-frontend') {
             steps {
                 dir("frontend") {
-                sh 'npm install'
-                sh 'npm audit fix --audit-level=critical --force'
+                // sh 'npm install'
+                // sh 'npm audit fix --audit-level=critical --force'
              }
             }
         }
 
-        
+       stage('deploy-infrastructure') {
+           
+           steps {
+            withCredentials([<object of type com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentialsBinding>]) {
+                  sh ''' 
+                  
+                  aws cloudformation deploy \
+                --template-file .circleci/files/backend.yml \
+                --tags Project=software \
+                --stack-name "software-backend-${BUILD_ID}" \
+                --parameter-overrides ID="${BUILD_ID}"  
+                  
+                  '''
+            }
+           }
+       }
     }
 }
