@@ -2,6 +2,9 @@ pipeline {
     agent {
         docker { image 'yosefadel/aws-node' }
     }
+     environment {
+      GOCACHE = "${env.WORKSPACE}/.build_cache"
+    }
     stages {
         stage('Source Backend') {
             steps {
@@ -11,6 +14,7 @@ pipeline {
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project'
                     withCredentials([gitUsernamePassword(credentialsId: 'SW-GitHub',
                     gitToolName: 'git-hub')]) {
+                        sh 'git fetch --all'
                     }
             }
         }
