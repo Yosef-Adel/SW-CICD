@@ -9,7 +9,7 @@ pipeline {
                 sh 'aws --version'
                 git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project'
-                    credentialsId: SW-GitHub
+                    credentialsId: "SW-GitHub"
             }
         }
         stage('Clean') {
