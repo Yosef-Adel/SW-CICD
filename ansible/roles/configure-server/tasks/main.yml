@@ -33,12 +33,33 @@
     cmd: "usermod -aG docker ubuntu"
     chdir: .
 
+- name: Install NGINX
+  become: True
+  apt:
+    name: nginx
+    state: present
+
+- name: Create NGINX configuration file
+  template:
+    src: node-app.conf.j2
+    dest: /etc/nginx/sites-available/node-app.conf
+
+- name: Enable NGINX configuration
+  file:
+    src: /etc/nginx/sites-available/node-app.conf
+    dest: /etc/nginx/sites-enabled/node-app.conf
+    state: link
+
+- name: Restart NGINX
+  service:
+    name: nginx
+    state: restarted
 
 
-- name: Install docker-compose
-  remote_user: ubuntu
-  get_url: 
-    url : https://github.com/docker/compose/releases/download/1.25.1-rc1/docker-compose-Linux-x86_64
-    dest: /usr/local/bin/docker-compose
-    mode: 'u+x,g+x,o+x'
+# - name: Install docker-compose
+#   remote_user: ubuntu
+#   get_url: 
+#     url : https://github.com/docker/compose/releases/download/1.25.1-rc1/docker-compose-Linux-x86_64
+#     dest: /usr/local/bin/docker-compose
+#     mode: 'u+x,g+x,o+x'
 
