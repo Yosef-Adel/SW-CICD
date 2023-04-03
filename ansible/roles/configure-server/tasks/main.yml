@@ -1,8 +1,8 @@
 ---
-# - name: "upgrade packages."
-#   become: true
-#   apt:
-#     upgrade: "yes"
+- name: "upgrade packages."
+  become: true
+  apt:
+    upgrade: "yes"
 
 - name: "install dependencies."
   become: true
@@ -42,12 +42,3 @@
     dest: /usr/local/bin/docker-compose
     mode: 'u+x,g+x,o+x'
 
-- copy:
-    src: /home/circleci/project/util/docker-compose.yml
-    dest: /home/ubuntu/
-
-- name: Run PostgresQL DB
-  become: True
-  shell:
-    cmd: "docker-compose -f docker-compose.yml up -d"
-    chdir: .

@@ -121,6 +121,8 @@ pipeline {
 
         steps {
             sh ''' 
+            pwd 
+            ls
             cd ansible
             cat inventory.txt 
             ansible-playbook -i inventory.txt   --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
