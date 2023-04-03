@@ -20,22 +20,32 @@ pipeline {
             }
         }
 
-
-
-        stage('Clean') {
+        stage('build-backend') {
             steps {
              dir("backend") {
-                 sh 'ls'
+                 sh 'npm install'
+                 sh 'npm run build'
              }
             }
         }
-        stage('Test') {
+
+        stage('test-backend') {
             steps {
                 dir("backend") {
-                    sh 'pwd'
+                sh 'npm install'
+                sh 'npm run test'
              }
             }
         }
+        stage('scan-backend') {
+            steps {
+                dir("backend") {
+                sh 'npm install'
+                sh 'npm audit fix --audit-level=critical --force'
+             }
+            }
+        }
+
         
     }
 }
