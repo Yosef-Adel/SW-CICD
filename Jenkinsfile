@@ -13,7 +13,7 @@ pipeline {
 
                     git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project',
-                    credentialsId: 'GG'
+                   
                 }
             
                     
@@ -26,7 +26,7 @@ pipeline {
 
                     git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-FRNT-Project',
-                    credentialsId: 'GG'
+                    
                 }
             
                     
