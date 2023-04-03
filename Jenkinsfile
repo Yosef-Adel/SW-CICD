@@ -12,7 +12,7 @@ pipeline {
                 sh 'aws --version'
                 git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project',
-                    credentialsId: 'SW-GitHub'
+                    credentialsId: 'Yosef.saaid02@eng-st.cu.edu.eg/yo558231/'
                     
             }
         }
