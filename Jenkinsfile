@@ -137,7 +137,7 @@ pipeline {
         steps {
             sh ''' 
                 cd backend 
-                cat ENVVAER >> .env
+                cat $ENVVAER >> .env
                 cd ..
                 tar -czf artifact.tar.gz  backend
                 cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz
