@@ -29,17 +29,20 @@
     state: present
 
 - name: Create NGINX configuration file
+  become: True
   template:
     src: node-app.conf.j2
     dest: /etc/nginx/sites-available/node-app.conf
 
 - name: Enable NGINX configuration
+  become: True
   file:
     src: /etc/nginx/sites-available/node-app.conf
     dest: /etc/nginx/sites-enabled/node-app.conf
     state: link
 
 - name: Restart NGINX
+  become: True
   service:
     name: nginx
     state: restarted
