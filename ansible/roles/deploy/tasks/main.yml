@@ -1,18 +1,13 @@
 
-- name: Create Backend Directory
-  file:
-    path: /home/ubuntu/backend
-    state: directory
-
 - copy:
     src: roles/deploy/artifact.tar.gz
-    dest: /home/ubuntu/backend
+    dest: /home/ubuntu
 
 
 - name: Extract artifact.tar.gz to EC2 
   unarchive:
     src: artifact.tar.gz
-    dest: /home/ubuntu/backend
+    dest: /home/ubuntu
 
 
 - name: "Installing Node Dependencies"
