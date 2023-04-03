@@ -137,6 +137,8 @@ pipeline {
         steps {
             sh ''' 
                 cd backend 
+                ls
+                rm -rf node_modules
                 cat $ENVVAER >> .env
                 cd ..
                 tar -czf artifact.tar.gz  backend
