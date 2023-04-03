@@ -12,7 +12,7 @@ pipeline {
                 dir('backend') {
 
                     git branch: 'main',
-                    url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project',
+                    url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project'
                    
                 }
             
@@ -25,7 +25,7 @@ pipeline {
                 dir('frontend') {
 
                     git branch: 'main',
-                    url: 'https://github.com/Yosef-Adel/SW-FRNT-Project',
+                    url: 'https://github.com/Yosef-Adel/SW-FRNT-Project'
                     
                 }
             
