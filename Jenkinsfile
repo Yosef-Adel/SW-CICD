@@ -2,8 +2,10 @@ pipeline {
     agent {
         docker { image 'yosefadel/aws-node' }
     }
+ 
      environment {
-      GOCACHE = "${env.WORKSPACE}/.build_cache"
+        GOCACHE = "${env.WORKSPACE}/.build_cache"
+       ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key') 
     }
     stages {
         stage('Source Backend') {
@@ -87,20 +89,44 @@ pipeline {
         }
 
        stage('deploy-infrastructure') {
-           environment {
-            AWS_DEFAULT_REGION="us-east-1"
-        }
+            environment {
+                AWS_DEFAULT_REGION="us-east-1"
+            }
            steps {
            withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-          sh '''
-            aws cloudformation deploy \
-              --template-file  files/backend.yml \
-              --tags Project=udapeople \
-              --stack-name "udapeople-backend-${BUILD_ID}" \
-              --parameter-overrides ID="${BUILD_ID}"  
-          '''
-        }
+            sh '''
+                aws cloudformation deploy \
+                --template-file  files/backend.yml \
+                --tags Project=SW-project \
+                --stack-name "SW-project-backend-${BUILD_ID}" \
+                --parameter-overrides ID="${BUILD_ID}"  
+                aws ec2 describe-instances \
+                --filters "Name=tag:Name,Values=backend-${BUILD_ID}" \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --output text >> ansible/inventory.txt
+                
+            '''
            }
+            archiveArtifacts allowEmptyArchive: true,
+                artifacts: '*.txt',
+                fingerprint: true,
+                followSymlinks: false,
+                onlyIfSuccessful: true
+    
+           }
+       }
+
+       stage ('configure-infrastructure') {
+        
+
+        steps {
+            sh ''' 
+            cd ansible
+            cat inventory.txt 
+            ansible-playbook -i inventory.txt   --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
+            '''
+            
+        }
        }
     }
 }
