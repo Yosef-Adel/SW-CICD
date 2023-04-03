@@ -7,12 +7,14 @@ pipeline {
     }
     stages {
         stage('Source Backend') {
+
             steps {
-                mkdir backend 
-                cd backend 
-                git branch: 'main',
+                dir("backend"){
+                    git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project',
                     credentialsId: 'GG'
+                }
+            
                     
             }
         }
@@ -21,12 +23,16 @@ pipeline {
 
         stage('Clean') {
             steps {
-               sh 'ls'
+             dir("backend"){{
+                 sh 'ls'
+             }
             }
         }
         stage('Test') {
             steps {
-                sh 'ls'
+                dir("backend"){{
+                    sh 'pwd'
+             }
             }
         }
         
