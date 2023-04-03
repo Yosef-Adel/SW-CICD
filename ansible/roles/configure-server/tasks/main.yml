@@ -25,42 +25,21 @@
     production: yes
     state: present
 
-- name: "install docker."
-  become: true
-  apt:
-    name: ["docker.io"]
-    state: latest
-    update_cache: yes
+# - name: "install docker."
+#   become: true
+#   apt:
+#     name: ["docker.io"]
+#     state: latest
+#     update_cache: yes
 
 
-- name: sudo usermod -aG docker root
-  become: True
-  shell:
-    cmd: "usermod -aG docker ubuntu"
-    chdir: .
+# - name: sudo usermod -aG docker root
+#   become: True
+#   shell:
+#     cmd: "usermod -aG docker ubuntu"
+#     chdir: .
 
 
-- name: Install NGINX
-  become: True
-  apt:
-    name: nginx
-    state: present
-
-- name: Create NGINX configuration file
-  template:
-    src: node-app.conf.j2
-    dest: /etc/nginx/sites-available/node-app.conf
-
-- name: Enable NGINX configuration
-  file:
-    src: /etc/nginx/sites-available/node-app.conf
-    dest: /etc/nginx/sites-enabled/node-app.conf
-    state: link
-
-- name: Restart NGINX
-  service:
-    name: nginx
-    state: restarted
 
 
 # - name: Install docker-compose
