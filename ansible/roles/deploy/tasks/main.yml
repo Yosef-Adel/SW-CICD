@@ -28,24 +28,6 @@
     name: nginx
     state: present
 
-- name: "Config nginx"
-  become: True
-  shell: |
-    unlink /etc/nginx/sites-enabled/default
-    tee /etc/nginx/conf.d/jenkins.conf <<EOF
-      upstream jenkins {
-          server 127.0.0.1:3000;
-      }
-
-      server {
-          listen 80 default_server;
-          listen [::]:80  default_server;
-          location / {
-              proxy_pass http://api;
-              proxy_set_header Host \$host;
-              proxy_set_header X-Real-IP \$remote_addr;
-          }
-      }
-      EOF
-    systemctl reload nginx
-    
+- copy:
+    src: roles/deploy/tasks/default.conf
+    dest: /etc/nginx/conf.d/default.conf
