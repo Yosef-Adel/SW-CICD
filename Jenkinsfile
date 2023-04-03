@@ -12,8 +12,8 @@ pipeline {
                 sh 'aws --version'
                 git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project',
-                    credentialsId: 'Yosef.saaid02@eng-st.cu.edu.eg/yo558231/'
-                    
+                    withCredentials([gitUsernamePassword(credentialsId: 'SW-GitHub',
+                    gitToolName: 'git-hub')])
             }
         }
         stage('Clean') {
