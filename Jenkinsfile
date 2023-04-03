@@ -89,17 +89,12 @@ pipeline {
        stage('deploy-infrastructure') {
            
            steps {
-            withCredentials([<object of type com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentialsBinding>]) {
-                  sh ''' 
-                  
-                    aws cloudformation deploy \
-                    --template-file .circleci/files/backend.yml \
-                    --tags Project=software \
-                    --stack-name "software-backend-${BUILD_ID}" \
-                    --parameter-overrides ID="${BUILD_ID}"  
-                    
-                    '''
-            }
+           withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          sh '''
+            aws --version
+            aws ec2 describe-instances
+          '''
+        }
            }
        }
     }
