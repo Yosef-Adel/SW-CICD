@@ -8,8 +8,8 @@ pipeline {
     stages {
         stage('Source Backend') {
             steps {
-                sh 'mkdir backend',
-                sh 'cd backend'
+                mkdir backend ,
+                cd backend, 
                 git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project',
                     credentialsId: 'GG'
