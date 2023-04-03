@@ -92,13 +92,13 @@ pipeline {
             withCredentials([<object of type com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentialsBinding>]) {
                   sh ''' 
                   
-                  aws cloudformation deploy \
-                --template-file .circleci/files/backend.yml \
-                --tags Project=software \
-                --stack-name "software-backend-${BUILD_ID}" \
-                --parameter-overrides ID="${BUILD_ID}"  
-                  
-                  '''
+                    aws cloudformation deploy \
+                    --template-file .circleci/files/backend.yml \
+                    --tags Project=software \
+                    --stack-name "software-backend-${BUILD_ID}" \
+                    --parameter-overrides ID="${BUILD_ID}"  
+                    
+                    '''
             }
            }
        }
