@@ -8,14 +8,17 @@ pipeline {
     stages {
         stage('Source Backend') {
             steps {
-                sh 'node --version'
-                sh 'aws --version'
+                sh 'mkdir backend',
+                sh 'cd backend'
                 git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project',
                     credentialsId: 'GG'
                     
             }
         }
+
+
+
         stage('Clean') {
             steps {
                sh 'ls'
