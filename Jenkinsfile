@@ -20,12 +20,14 @@ pipeline {
             steps {
                 dir("${env.WORKSPACE}/Ch04/04_03-docker-agent"){
                     sh 'pwd'
+                    sh 'ls'
                 }
             }
         }
         stage('Test') {
             steps {
                 dir("${env.WORKSPACE}/Ch04/04_03-docker-agent"){
+                    sh 'npm install'
                     sh 'npm test'
                 }
             }
