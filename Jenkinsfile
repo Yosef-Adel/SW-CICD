@@ -19,6 +19,19 @@ pipeline {
                     
             }
         }
+        stage('Source Frontend') {
+
+            steps {
+                dir('frontend') {
+
+                    git branch: 'main',
+                    url: 'https://github.com/Yosef-Adel/SW-FRNT-Project',
+                    credentialsId: 'GG'
+                }
+            
+                    
+            }
+        }
 
         stage('build-backend') {
             steps {
@@ -29,6 +42,16 @@ pipeline {
             }
         }
 
+        stage('build-frontend') {
+        steps {
+            dir("frontend") {
+            //  sh 'npm install'
+            //  sh 'npm run build'
+            }
+        }
+        }
+
+
         stage('test-backend') {
             steps {
                 dir("backend") {
@@ -37,9 +60,26 @@ pipeline {
              }
             }
         }
+
+         stage('test-frontend') {
+            steps {
+                dir("frontend") {
+                // sh 'npm install'
+                // sh 'npm  test'
+             }
+            }
+        }
         stage('scan-backend') {
             steps {
                 dir("backend") {
+                sh 'npm install'
+                sh 'npm audit fix --audit-level=critical --force'
+             }
+            }
+        }
+         stage('scan-frontend') {
+            steps {
+                dir("frontend") {
                 sh 'npm install'
                 sh 'npm audit fix --audit-level=critical --force'
              }
