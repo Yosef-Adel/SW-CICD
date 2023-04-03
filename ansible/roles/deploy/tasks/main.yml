@@ -15,10 +15,6 @@
     cd /home/ubuntu/backend
     npm i
 
-
-
-
-
 - name: "Start application"
   shell: |
     ls
@@ -26,4 +22,23 @@
     pm2 stop default
     pm2 start -f server.js
 
+- name: Install NGINX
+      apt:
+        name: nginx
+        state: present
 
+    - name: Create NGINX configuration file
+      template:
+        src: node-app.conf.j2
+        dest: /etc/nginx/sites-available/node-app.conf
+
+    - name: Enable NGINX configuration
+      file:
+        src: /etc/nginx/sites-available/node-app.conf
+        dest: /etc/nginx/sites-enabled/node-app.conf
+        state: link
+
+    - name: Restart NGINX
+      service:
+        name: nginx
+        state: restarted
