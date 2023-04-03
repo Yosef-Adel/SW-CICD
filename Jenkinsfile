@@ -9,7 +9,7 @@ pipeline {
         stage('Source Backend') {
 
             steps {
-                dir("backend"){
+                dir('backend'){
                     git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project',
                     credentialsId: 'GG'
