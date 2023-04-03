@@ -5,7 +5,7 @@
     state: directory
 
 - copy:
-    src: ~/var/jenkins_home/workspace/SW-CICD/ansible/roles/deploy/artifact.tar.gz
+    src: roles/deploy/artifact.tar.gz
     dest: /home/ubuntu/backend
 
 
