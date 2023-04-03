@@ -28,21 +28,24 @@
     name: nginx
     state: present
 
-- name: Create NGINX configuration file
+- name: "Config nginx"
   become: True
-  template:
-    src: node-app.conf.j2
-    dest: /etc/nginx/sites-available/node-app.conf
+  shell: |
+    unlink /etc/nginx/sites-enabled/default
+    tee /etc/nginx/conf.d/jenkins.conf <<EOF
+      upstream jenkins {
+          server 127.0.0.1:3000;
+      }
 
-- name: Enable NGINX configuration
-  become: True
-  file:
-    src: /etc/nginx/sites-available/node-app.conf
-    dest: /etc/nginx/sites-enabled/node-app.conf
-    state: link
-
-- name: Restart NGINX
-  become: True
-  service:
-    name: nginx
-    state: restarted
+      server {
+          listen 80 default_server;
+          listen [::]:80  default_server;
+          location / {
+              proxy_pass http://api;
+              proxy_set_header Host \$host;
+              proxy_set_header X-Real-IP \$remote_addr;
+          }
+      }
+      EOF
+    systemctl reload nginx
+    
