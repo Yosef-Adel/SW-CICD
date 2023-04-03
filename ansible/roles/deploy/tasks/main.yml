@@ -5,7 +5,7 @@
     state: directory
 
 - copy:
-    src: ~/project/.circleci/ansible/roles/deploy/artifact.tar.gz
+    src: /var/jenkins_home/workspace/SW-CICD/ansible/roles/deploy/artifact.tar.gz
     dest: /home/ubuntu/backend
 
 
@@ -29,6 +29,6 @@
     ls
     cd backend 
     pm2 stop default
-    pm2 start -f /home/ubuntu/backend/dist/main.js
+    pm2 start -f server.js
 
 

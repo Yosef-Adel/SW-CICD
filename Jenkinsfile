@@ -6,6 +6,7 @@ pipeline {
      environment {
         GOCACHE = "${env.WORKSPACE}/.build_cache"
        ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key') 
+       ENVVAER=credentials('ENVTXTGG') 
     }
     stages {
         stage('Source Backend') {
@@ -118,7 +119,6 @@ pipeline {
 
        stage ('configure-infrastructure') {
         
-
         steps {
             sh ''' 
             pwd 
@@ -129,6 +129,24 @@ pipeline {
             '''
             
         }
+       }
+
+
+       stage ('deploy-backend') {
+
+        steps {
+            sh ''' 
+                cd backend 
+                cat ENVVAER >> .env
+                cd ..
+                tar -czf artifact.tar.gz  backend
+                cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz
+                ls ansible/roles/deploy/
+                cd ansible 
+                ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml
+            '''
+        }
+
        }
     }
 }
