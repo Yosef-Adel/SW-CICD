@@ -17,9 +17,9 @@
 - name: "install dependencies."
   become: true
   shell: |
-  apt install curl
-  curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-  apt install nodejs
+    apt install curl
+    curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+    apt -y install nodejs
 
 - name: "install pm2"
   become: true
