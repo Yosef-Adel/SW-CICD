@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        docker { image 'yosefadel/aws-node' }
-    }
+    agent any 
  
      environment {
         GOCACHE = "${env.WORKSPACE}/.build_cache"
@@ -12,8 +10,11 @@ pipeline {
     }
     stages {
         stage('Source Backend') {
-
+            agent any 
             steps {
+                agent {
+                    docker { image 'node' }
+                }
                 dir('backend') {
 
                     git branch: 'main',
@@ -25,7 +26,9 @@ pipeline {
             }
         }
         stage('Source Frontend') {
-
+             agent {
+                    docker { image 'node' }
+                }
             steps {
                 dir('frontend') {
 
@@ -39,6 +42,9 @@ pipeline {
         }
 
         stage('build-backend') {
+             agent {
+                    docker { image 'node' }
+                }
             steps {
              dir("backend") {
                 //  sh 'npm install'
@@ -48,6 +54,9 @@ pipeline {
         }
 
         stage('build-frontend') {
+             agent {
+                    docker { image 'node' }
+                }
         steps {
             dir("frontend") {
             //  sh 'npm install'
@@ -58,6 +67,9 @@ pipeline {
 
 
         stage('test-backend') {
+             agent {
+                    docker { image 'node' }
+                }
             steps {
                 dir("backend") {
                 // sh 'npm install'
@@ -67,6 +79,9 @@ pipeline {
         }
 
          stage('test-frontend') {
+             agent {
+                    docker { image 'node' }
+                }
             steps {
                 dir("frontend") {
                 // sh 'npm install'
@@ -75,6 +90,9 @@ pipeline {
             }
         }
         stage('scan-backend') {
+             agent {
+                    docker { image 'node' }
+                }
             steps {
                 dir("backend") {
                 // sh 'npm install'
@@ -83,6 +101,9 @@ pipeline {
             }
         }
          stage('scan-frontend') {
+             agent {
+                    docker { image 'node' }
+                }
             steps {
                 dir("frontend") {
                 // sh 'npm install'
@@ -92,6 +113,9 @@ pipeline {
         }
 
        stage('deploy-infrastructure') {
+         agent {
+                    docker { image 'yosefadel/aws-node' }
+                }
             environment {
                 AWS_DEFAULT_REGION="us-east-1"
             }
