@@ -151,31 +151,18 @@ pipeline {
             }
         }
 
+        stage('deploy-backend') {
 
-      
-
-
-    //    stage ('deploy-backend') {
-
-    //     steps {
-    //         sh ''' 
-    //             cd backend 
-    //             ls
-    //             rm -rf node_modules
-    //             cat $ENVVAER >> .env
-    //             cd ..
-    //             tar -czf artifact.tar.gz  backend
-    //             cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz
-    //             ls ansible/roles/deploy/
-    //             cd ansible 
-    //             echo "Test Webchoock"
-    //         '''
-    //                 sh 'ansible-playbook -i inventory/mariadb.hosts --private-key=$ANSIBLE_PRIVATE_KEY playbooks/mariadb.yml'
-
-    //         ansiblePlaybook inventory: 'inventory.txt', playbook: 'deploy-backend.yml', sudo: true, vaultCredentialsId: 'ansible-private-key'
-    //     }
-
-    //    }
+            steps{
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
+                sh ''' 
+                    tar -czf artifact.tar.gz * 
+                    cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz
+                    cd ansible 
+                    ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml
+                '''
+            }
+        }
       
     }
 
