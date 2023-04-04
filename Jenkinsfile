@@ -133,16 +133,16 @@ pipeline {
                         --query 'Reservations[*].Instances[*].PublicIpAddress' \
                         --output text >> ansible/inventory.txt
                     '''
-                    stash name: 'invFile', includes: 'inventory.txt'
+                    stash name: 'invFile', includes: 'ansible/inventory.txt'
                 }
             }
         }
         stage('configure-infrastructure') {
             steps {
+                unstash 'invFile'
                 dir('ansible') {
-                    unstash 'invFile'
+                    
                     sh ''' 
-                       
                         cat inventory.txt 
                         echo "Test Webhook"
                         ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
