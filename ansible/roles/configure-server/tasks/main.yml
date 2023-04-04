@@ -5,10 +5,14 @@
 #     name: aptitude
 #     state: present
 
-# - name: "upgrade packages."
-#   become: True
-#   apt:
-#     upgrade: "yes"
+- name: "upgrade packages."
+  become: True
+  shell: |
+    apt update
+    apt upgrade 
+
+    
+    
 
 - name: "install dependencies."
   become: true
