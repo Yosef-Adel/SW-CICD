@@ -145,8 +145,9 @@ pipeline {
                 cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz
                 ls ansible/roles/deploy/
                 cd ansible 
-                ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml
+                echo "GGGGGGGGG"
             '''
+            ansiblePlaybook inventory: 'inventory.txt', playbook: 'deploy-backend.yml', sudo: true, vaultCredentialsId: 'ansible-private-key'
         }
 
        }
