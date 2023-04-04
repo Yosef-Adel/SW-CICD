@@ -10,12 +10,12 @@ pipeline {
         stage('Build Frontend') {
         agent {
             docker {
-            image 'node:13.8.0'
+            image 'node:16.8.0'
             }
         }
         steps {
             checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git']])
-            sh ' npm install && npm run build'
+            sh 'ls &  npm install && npm run build'
             stash(name: 'frontend-build', includes: 'frontend/node_modules/**')
         }
 
@@ -24,7 +24,7 @@ pipeline {
         stage('Build Backend') {
         agent {
             docker {
-            image 'node:13.8.0'
+            image 'node:16.8.0'
             }
         }
         steps {
@@ -36,7 +36,7 @@ pipeline {
         stage('Test Frontend') {
         agent {
             docker {
-            image 'node:13.8.0'
+            image 'node:16.8.0'
             }
         }
         steps {
@@ -47,7 +47,7 @@ pipeline {
         stage('Test Backend') {
         agent {
             docker {
-            image 'node:13.8.0'
+            image 'node:16.8.0'
             }
         }
         steps {
@@ -58,7 +58,7 @@ pipeline {
         stage('Scan Frontend') {
         agent {
             docker {
-            image 'node:13.8.0'
+            image 'node:16.8.0'
             }
         }
         steps {
@@ -69,7 +69,7 @@ pipeline {
         stage('Scan Backend') {
         agent {
             docker {
-            image 'node:13.8.0'
+            image 'node:16.8.0'
             }
         }
         steps {
