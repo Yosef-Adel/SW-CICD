@@ -1,0 +1,151 @@
+pipeline {
+  agent any
+  
+  environment {
+    WORKFLOW_ID = "${env.CIRCLE_WORKFLOW_ID:0:7}"
+  }
+
+  stages {
+    stage('Build Frontend') {
+      agent {
+        docker {
+          image 'node:13.8.0'
+        }
+      }
+      steps {
+        checkout()
+        sh 'cd frontend && npm install && npm run build'
+        stash(name: 'frontend-build', includes: 'frontend/node_modules/**')
+      }
+    }
+
+    stage('Build Backend') {
+      agent {
+        docker {
+          image 'node:13.8.0'
+        }
+      }
+      steps {
+        checkout()
+        sh 'cd backend && npm install && npm run build'
+        stash(name: 'backend-build', includes: 'backend/node_modules/**')
+      }
+    }
+
+    stage('Test Frontend') {
+      agent {
+        docker {
+          image 'node:13.8.0'
+        }
+      }
+      steps {
+        checkout()
+        unstash 'frontend-build'
+        sh 'cd frontend && npm install && npm run test'
+      }
+    }
+
+    stage('Test Backend') {
+      agent {
+        docker {
+          image 'node:13.8.0'
+        }
+      }
+      steps {
+        checkout()
+        unstash 'backend-build'
+        sh 'cd backend && npm install && npm run test'
+      }
+    }
+
+    stage('Scan Frontend') {
+      agent {
+        docker {
+          image 'node:13.8.0'
+        }
+      }
+      steps {
+        checkout()
+        unstash 'frontend-build'
+        sh 'cd frontend && npm install && npm audit fix --audit-level=critical --force'
+      }
+    }
+
+    stage('Scan Backend') {
+      agent {
+        docker {
+          image 'node:13.8.0'
+        }
+      }
+      steps {
+        checkout()
+        unstash 'backend-build'
+        sh 'cd backend && npm install && npm audit fix --audit-level=critical --force'
+      }
+    }
+
+    stage('Deploy Infrastructure') {
+      agent {
+        docker {
+          image 'amazon/aws-cli'
+        }
+      }
+      steps {
+        checkout()
+        sh 'yum install -y tar gzip'
+
+        sh """
+          aws cloudformation deploy \
+            --template-file .circleci/files/backend.yml \
+            --tags Project=udapeople \
+            --stack-name \"udapeople-backend-${WORKFLOW_ID}\" \
+            --parameter-overrides ID=\"${WORKFLOW_ID}\"
+        """
+
+        sh """
+          aws cloudformation deploy \
+            --template-file .circleci/files/frontend.yml \
+            --tags Project=udapeople \
+            --stack-name \"udapeople-frontend-${WORKFLOW_ID}\" \
+            --parameter-overrides ID=\"${WORKFLOW_ID}\"
+        """
+
+        sh """
+          aws ec2 describe-instances \
+            --filters \"Name=tag:Name,Values=backend-${WORKFLOW_ID}\" \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text >> .circleci/ansible/inventory.txt
+        """
+
+        stash(name: 'inventory', includes: '.circleci/ansible/inventory.txt')
+        script {
+          destroyEnvironment()
+        }
+      }
+    }
+
+    stage('Configure Infrastructure') {
+      agent {
+        docker {
+          image 'yosefadel/aws-node'
+        }
+      }
+      steps {
+        checkout()
+        unstash 'inventory'
+        // add SSH keys
+        // execute Ansible playbooks
+      }
+    }
+  }
+
+  post {
+    failure {
+      script {
+        destroyEnvironment()
+        revertMigrations()
+        notifySlack()
+      }
+    }
+  }
+}
