@@ -8,8 +8,8 @@
 - name: "upgrade packages."
   become: True
   shell: |
-    apt update
-    apt upgrade 
+    apt -y update
+    apt -y upgrade 
 
     
     
