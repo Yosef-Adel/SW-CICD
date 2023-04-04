@@ -127,9 +127,9 @@ pipeline {
             ls
             cd ansible
             cat inventory.txt 
-            ansible-playbook -i inventory.txt   --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
+            echo "Test Webchoock"
             '''
-            
+            ansiblePlaybook inventory: 'inventory.txt', playbook: 'configure-server.yml', sudo: true, vaultCredentialsId: 'ansible-private-key'
         }
        }
 
