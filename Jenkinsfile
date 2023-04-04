@@ -131,28 +131,25 @@ pipeline {
                 --filters "Name=tag:Name,Values=backend-${BUILD_ID}" \
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
                 --output text >> ansible/inventory.txt
-                
+ 
             '''
+             stash name: 'invFile', includes: 'inventory.txt'
+
            }
-            archiveArtifacts allowEmptyArchive: true,
-                artifacts: '*.txt',
-                fingerprint: true,
-                followSymlinks: false,
-                onlyIfSuccessful: true
-    
-           }
+            
        }
 
        stage ('configure-infrastructure') {
         
         steps {
+            sh ' cd ansible '
+            unstash 'invFile'
             sh ''' 
-            pwd 
-            ls
-            cd ansible
             cat inventory.txt 
             echo "Test Webchoock"
+            
             ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
+
             '''
           
 
