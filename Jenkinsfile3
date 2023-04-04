@@ -2,6 +2,8 @@ pipeline {
     agent any 
     environment {
         WORKFLOW_ID = "${BUILD_ID}"
+        ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key') 
+        ENVVAER=credentials('ENVTXTGG') 
     }
     stages {
     
@@ -38,7 +40,6 @@ pipeline {
             }
         }
         steps {
-            checkout()
             unstash 'frontend-build'
             sh 'cd frontend && npm install && npm run test'
         }
@@ -50,7 +51,6 @@ pipeline {
             }
         }
         steps {
-            checkout()
             unstash 'backend-build'
             sh 'cd backend && npm install && npm run test'
         }
@@ -62,7 +62,6 @@ pipeline {
             }
         }
         steps {
-            checkout()
             unstash 'frontend-build'
             sh 'cd frontend && npm install && npm audit fix --audit-level=critical --force'
         }
@@ -74,13 +73,59 @@ pipeline {
             }
         }
         steps {
-            checkout()
             unstash 'backend-build'
             sh 'cd backend && npm install && npm audit fix --audit-level=critical --force'
         }
         }
+        stage('Deploy Infrastructure') {
+        agent {
+            docker {
+            image 'amazon/aws-cli'
+            }
+        }
+        steps {
+            sh 'yum install -y tar gzip'
 
+            sh """
+            aws cloudformation deploy \
+                --template-file files/backend.yml \
+                --tags Project=SW-project \
+                --stack-name \"SW-project-backend-${WORKFLOW_ID}\" \
+                --parameter-overrides ID=\"${WORKFLOW_ID}\"
+            """
 
+            sh """
+            aws cloudformation deploy \
+                --template-file files/frontend.yml \
+                --tags Project=SW-project \
+                --stack-name \"SW-project-frontend-${WORKFLOW_ID}\" \
+                --parameter-overrides ID=\"${WORKFLOW_ID}\"
+            """
+
+            sh """
+            aws ec2 describe-instances \
+                --filters \"Name=tag:Name,Values=backend-${WORKFLOW_ID}\" \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --output text >> ansible/inventory.txt
+            """
+
+            stash(name: 'inventory', includes: 'inventory.txt')
+           
+        }
+        }
+        stage('configure-infrastructure') {
+        steps {
+            dir('ansible') {
+                unstash 'invFile'
+                sh ''' 
+                    ls
+                    cat inventory.txt 
+                    echo "Test Webhook"
+                    ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
+                '''
+            }
+            }
+        }
 
 
 
