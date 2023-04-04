@@ -127,7 +127,7 @@ pipeline {
                         --tags Project=SW-project \
                         --stack-name "SW-project-backend-${BUILD_ID}" \
                         --parameter-overrides ID="${BUILD_ID}"
-                        
+                        echo "[web]" >> inventory.txt
                         aws ec2 describe-instances \
                         --filters "Name=tag:Name,Values=backend-${BUILD_ID}" \
                         --query 'Reservations[*].Instances[*].PublicIpAddress' \
