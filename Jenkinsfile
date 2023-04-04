@@ -152,14 +152,21 @@ pipeline {
         }
 
         stage('deploy-backend') {
-
+            unstash 'invFile'
             steps{
+                sh ''' 
+                mkdir backend
+                cd backend
+                '''
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
                 sh ''' 
-                    pwd
-                    ls
-                  
-                 
+                    ls 
+                    cd ..
+
+                    tar -czf artifact.tar.gz backend 
+                    cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz
+                    cd ansible 
+                    ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml
                 '''
             }
         }
