@@ -152,8 +152,9 @@ pipeline {
         }
 
         stage('deploy-backend') {
-            unstash 'invFile'
+            
             steps{
+                unstash 'invFile'
                 sh ''' 
                 mkdir backend
                 cd backend
