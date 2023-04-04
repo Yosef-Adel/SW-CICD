@@ -16,10 +16,10 @@
 
 - name: "install dependencies."
   become: true
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
+   shell: |
+    apt install curl
+    curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+    apt install nodejs
 
 - name: "install pm2"
   become: true
