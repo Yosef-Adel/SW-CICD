@@ -142,6 +142,8 @@ pipeline {
                 dir('ansible') {
                     unstash 'invFile'
                     sh ''' 
+                        ls
+                        pwd
                         cd ansible
                         cat inventory.txt 
                         echo "Test Webhook"
