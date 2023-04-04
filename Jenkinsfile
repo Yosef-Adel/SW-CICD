@@ -152,10 +152,10 @@ pipeline {
             cd ansible
             cat inventory.txt 
             echo "Test Webchoock"
-            chown -R $USER:$USER /var/lib/jenkins/.ansible
-
+            ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
             '''
-            ansiblePlaybook inventory: 'inventory.txt', playbook: 'configure-server.yml', sudo: true, vaultCredentialsId: 'ansible-private-key'
+          
+
         }
        }
 
@@ -175,6 +175,8 @@ pipeline {
                 cd ansible 
                 echo "Test Webchoock"
             '''
+                    sh 'ansible-playbook -i inventory/mariadb.hosts --private-key=$ANSIBLE_PRIVATE_KEY playbooks/mariadb.yml'
+
             ansiblePlaybook inventory: 'inventory.txt', playbook: 'deploy-backend.yml', sudo: true, vaultCredentialsId: 'ansible-private-key'
         }
 
