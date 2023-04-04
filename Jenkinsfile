@@ -145,7 +145,7 @@ pipeline {
                 cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz
                 ls ansible/roles/deploy/
                 cd ansible 
-                echo "GGGGGGGGG"
+                echo "Test Webchoock"
             '''
             ansiblePlaybook inventory: 'inventory.txt', playbook: 'deploy-backend.yml', sudo: true, vaultCredentialsId: 'ansible-private-key'
         }
