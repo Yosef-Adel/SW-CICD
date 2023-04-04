@@ -127,6 +127,7 @@ pipeline {
                 --tags Project=SW-project \
                 --stack-name "SW-project-backend-${BUILD_ID}" \
                 --parameter-overrides ID="${BUILD_ID}"  
+                
                 aws ec2 describe-instances \
                 --filters "Name=tag:Name,Values=backend-${BUILD_ID}" \
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -158,27 +159,27 @@ pipeline {
        }
 
 
-       stage ('deploy-backend') {
+    //    stage ('deploy-backend') {
 
-        steps {
-            sh ''' 
-                cd backend 
-                ls
-                rm -rf node_modules
-                cat $ENVVAER >> .env
-                cd ..
-                tar -czf artifact.tar.gz  backend
-                cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz
-                ls ansible/roles/deploy/
-                cd ansible 
-                echo "Test Webchoock"
-            '''
-                    sh 'ansible-playbook -i inventory/mariadb.hosts --private-key=$ANSIBLE_PRIVATE_KEY playbooks/mariadb.yml'
+    //     steps {
+    //         sh ''' 
+    //             cd backend 
+    //             ls
+    //             rm -rf node_modules
+    //             cat $ENVVAER >> .env
+    //             cd ..
+    //             tar -czf artifact.tar.gz  backend
+    //             cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz
+    //             ls ansible/roles/deploy/
+    //             cd ansible 
+    //             echo "Test Webchoock"
+    //         '''
+    //                 sh 'ansible-playbook -i inventory/mariadb.hosts --private-key=$ANSIBLE_PRIVATE_KEY playbooks/mariadb.yml'
 
-            ansiblePlaybook inventory: 'inventory.txt', playbook: 'deploy-backend.yml', sudo: true, vaultCredentialsId: 'ansible-private-key'
-        }
+    //         ansiblePlaybook inventory: 'inventory.txt', playbook: 'deploy-backend.yml', sudo: true, vaultCredentialsId: 'ansible-private-key'
+    //     }
 
-       }
+    //    }
       
     }
 
