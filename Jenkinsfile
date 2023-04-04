@@ -7,6 +7,8 @@ pipeline {
         GOCACHE = "${env.WORKSPACE}/.build_cache"
        ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key') 
        ENVVAER=credentials('ENVTXTGG') 
+       ANSIBLE_LOCAL_TEMP = "${env.HOME}/.ansible/tmp"
+
     }
     stages {
         stage('Source Backend') {
