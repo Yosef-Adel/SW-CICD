@@ -10,11 +10,11 @@ pipeline {
     }
     stages {
         stage('Source Backend') {
-            agent any 
-            steps {
-                agent {
+            agent {
                     docker { image 'node' }
                 }
+            steps {
+                
                 dir('backend') {
 
                     git branch: 'main',
