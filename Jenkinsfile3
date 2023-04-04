@@ -15,7 +15,7 @@ pipeline {
         }
         steps {
             checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git']])
-            sh ' ls && cd frontend && npm install && npm run build'
+            sh ' npm install && npm run build'
             stash(name: 'frontend-build', includes: 'frontend/node_modules/**')
         }
 
@@ -29,7 +29,7 @@ pipeline {
         }
         steps {
             checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
-            sh 'cd backend && npm install && npm run build'
+            sh 'npm install && npm run build'
             stash(name: 'backend-build', includes: 'backend/node_modules/**')
         }
         }
