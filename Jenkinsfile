@@ -156,10 +156,10 @@ pipeline {
             steps{
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
                 sh ''' 
-                    tar -czf artifact.tar.gz * 
+                    pwd
                     ls
-                    cp artifact.tar.gz ../ansible/roles/deploy/artifact.tar.gz
-                    ls
+                  
+                 
                 '''
             }
         }
