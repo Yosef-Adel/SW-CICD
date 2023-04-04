@@ -3,11 +3,11 @@ pipeline {
  
      environment {
         GOCACHE = "${env.WORKSPACE}/.build_cache"
-       ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key') 
-       ENVVAER=credentials('ENVTXTGG') 
-       ANSIBLE_LOCAL_TEMP = "${env.HOME}/.ansible/tmp"
+        ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key') 
+        ENVVAER=credentials('ENVTXTGG') 
+      
+        }
 
-    }
     stages {
         stage('Source Backend') {
             agent {
@@ -138,6 +138,7 @@ pipeline {
            }
             
        }
+       }
 
        stage ('configure-infrastructure') {
         
@@ -178,5 +179,7 @@ pipeline {
         }
 
        }
+      
     }
+
 }
