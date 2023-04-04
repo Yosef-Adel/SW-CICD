@@ -158,20 +158,18 @@ pipeline {
                 sh ''' 
                 pwd
                 ls
-                
+
                 cd backend
                 ls 
                 '''
                 // checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
-                // sh ''' 
-                //     ls 
-                //     cd ..
-
-                //     tar -czf artifact.tar.gz backend 
-                //     cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz
-                //     cd ansible 
-                //     ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml
-                // '''
+                sh ''' 
+                   
+                    tar -czf artifact.tar.gz backend 
+                    cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz
+                    cd ansible 
+                    ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml
+                '''
             }
         }
       
