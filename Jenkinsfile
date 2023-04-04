@@ -128,6 +128,8 @@ pipeline {
             cd ansible
             cat inventory.txt 
             echo "Test Webchoock"
+            chown -R $USER:$USER /var/lib/jenkins/.ansible
+
             '''
             ansiblePlaybook inventory: 'inventory.txt', playbook: 'configure-server.yml', sudo: true, vaultCredentialsId: 'ansible-private-key'
         }
