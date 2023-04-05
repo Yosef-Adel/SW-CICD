@@ -64,7 +64,7 @@ pipeline {
             }
             steps {
                 // Copy all files from the workspace directory to the current directory
-                sh 'cp -R $WORKSPACE/. .'
+                
                 sh 'ls'
                 // sh 'npm install'
                 // sh 'npm run test >> backend-test.txt'
