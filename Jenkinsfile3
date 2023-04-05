@@ -128,7 +128,7 @@ pipeline {
             //     --stack-name \"SW-project-frontend-${WORKFLOW_ID}\" \
             //     --parameter-overrides ID=\"${WORKFLOW_ID}\"
             // """
-            
+
             sh ' echo "[web]" >> ansible/inventory.txt '
             sh """
             aws ec2 describe-instances \
@@ -176,6 +176,6 @@ pipeline {
 
 
 
-
+    }
 
 }
