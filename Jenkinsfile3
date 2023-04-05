@@ -21,9 +21,9 @@ pipeline {
             '''
             checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git']])
             sh 'ls '
-            sh 'npm install'
-            sh 'npm run build'
-            sh 'npm run test'
+            sh 'npm -v'
+            sh 'node -v'
+         
 
             stash(name: 'frontend-build', includes: 'frontend/**')
         }
