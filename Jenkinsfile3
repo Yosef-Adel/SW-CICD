@@ -8,9 +8,9 @@ pipeline {
     stages {
     
         stage('Clean Workspace') {
-        steps {
-            deleteDir()
-        }
+            steps {
+                deleteDir()
+            }
         }
     
         stage('Build Frontend') {
@@ -24,6 +24,7 @@ pipeline {
                     git branch: 'master',
                     url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git'
                     sh 'ls '
+                    sh 'whoami'
                     sh 'rm -rf node_modules'
                     sh 'npm -v'
                     sh 'npm install'
