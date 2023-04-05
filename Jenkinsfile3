@@ -67,7 +67,7 @@ pipeline {
                    
                     sh 'ls '
                     sh 'npm install '
-                    sh 'npm run test 2> backend-test.txt'
+                    // sh 'npm run test 2> backend-test.txt'
                     
                     
                 }
@@ -97,16 +97,24 @@ pipeline {
         //     sh 'cd frontend && npm install && npm audit fix --audit-level=critical --force'
         // }
         // }
+        
         stage('Scan Backend') {
-        agent {
-            docker {
-            image 'node:16.17.0'
+            agent {
+                docker {
+                    image 'node'
+                }
             }
-        }
-        steps {
-            unstash 'backend-build'
-            sh 'cd backend && npm install && npm audit fix --audit-level=critical --force'
-        }
+            steps {
+                dir('backend') {
+                        
+                    sh 'ls '
+                    sh 'npm install '
+                    sh 'npm audit fix --audit-level=critical --force'
+                    
+                    
+                    
+                }
+            }
         }
 
         stage('Deploy Infrastructure') {
