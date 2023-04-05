@@ -18,7 +18,7 @@ pipeline {
             sh '''
              ls 
              pwd
-             npm install 
+           
              '''
             // npm build
             stash(name: 'frontend-build', includes: 'frontend/node_modules/**')
