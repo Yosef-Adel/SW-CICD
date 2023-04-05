@@ -25,7 +25,7 @@
 - name: Install NGINX
   become: True
   shell: |
-    apt install nginx
+    apt -y install nginx
     rm -rf /etc/nginx/conf.d/default.conf
 
 - copy:
