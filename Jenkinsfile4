@@ -14,7 +14,7 @@ pipeline {
             steps {
                dir('frontend') {
                     checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
-                    sh 'ls'
+                    
                 }
             }
         }
@@ -24,7 +24,7 @@ pipeline {
 
                 dir('backend') {
                     checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
-                    sh 'ls -a'
+                    
                     
                 }
             }
@@ -44,7 +44,7 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir('backend') {
-                    sh 'ls'
+                    
                     sh 'npm install '
                     // sh 'npm build'
                 }
@@ -57,7 +57,7 @@ pipeline {
         stage('Test Frontend') {
             steps {
                  dir('frontend') {
-                    sh 'ls'
+                   
                     // sh 'npm test'
                     // sh 'npm build'
                 }
@@ -68,7 +68,7 @@ pipeline {
         stage('Test Backend') {
             steps {
                 dir('backend') {
-                    sh 'ls'
+                    
                     // sh 'npm test '
                     // sh 'npm build'
                 }
@@ -80,7 +80,7 @@ pipeline {
         stage('Scan Backend') {
             steps {
                 dir('backend') {
-                    sh 'ls'
+                    
                     sh 'npm audit fix --audit-level=critical --force'
                 }
             }
@@ -90,7 +90,7 @@ pipeline {
         stage('Scan Frontend') {
             steps {
                 dir('frontend') {
-                    sh 'ls'
+                    
                     sh 'npm audit fix --audit-level=critical --force'
                 }
             }
@@ -130,7 +130,7 @@ pipeline {
         stage('Configure Infrastructure') {
             steps {
                dir('ansible') {
-                sh 'ls'
+               
                 sh 'cat inventory.txt'
                 sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml'
                }
@@ -143,7 +143,7 @@ pipeline {
         stage('Deploy Backend') {
             steps {
                 dir('backend') {
-                    sh 'ls'
+                  
                     sh 'rm -rf node_modules .git'
                     sh 'cat $ENVVAER >> .env'
                     // sh 'npm test '
@@ -154,7 +154,7 @@ pipeline {
                 sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
                 
                 dir('ansible') {
-                    sh 'ls'
+                   
                     sh 'cat inventory.txt'
                     sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
                 }
