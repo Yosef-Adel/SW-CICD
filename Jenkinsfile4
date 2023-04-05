@@ -1,6 +1,8 @@
 pipeline {
-    agent docker { image 'yosefadel/aws-node-ansible' }
+    agent {
+        docker { image 'yosefadel/aws-node-ansible' }
 
+    }
 
     environment {
         GOCACHE = "${env.WORKSPACE}/.build_cache"
@@ -181,7 +183,7 @@ pipeline {
             }
         }
 
-        
+
         
         // stage('Deploy Frontend') {
         //     steps {
