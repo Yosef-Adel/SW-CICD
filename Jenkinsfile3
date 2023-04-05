@@ -63,9 +63,14 @@ pipeline {
                 }
             }
             steps {
-                // Copy all files from the workspace directory to the current directory
-                
-                sh 'ls'
+               dir('backend') {
+                   
+                    sh 'ls '
+                    sh 'npm install '
+                    // sh 'npm run build'
+                    // Copy all files generated in the build step to the workspace directory
+                    
+                }
                 // sh 'npm install'
                 // sh 'npm run test >> backend-test.txt'
             }
