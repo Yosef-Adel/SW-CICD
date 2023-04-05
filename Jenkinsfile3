@@ -49,7 +49,7 @@ pipeline {
                     git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project'
                     sh 'ls '
-                    sh sh 'npm install --unsafe-perm'
+                    sh 'npm install --unsafe-perm'
                     sh 'node build'
 
                 }
