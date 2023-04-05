@@ -67,9 +67,7 @@ pipeline {
                     // sh 'npm build'
                 }
             }
-            dependencies {
-                stage('Build Frontend')
-            }
+            
         }
         
         stage('Test Backend') {
@@ -80,9 +78,7 @@ pipeline {
                     // sh 'npm build'
                 }
             }
-            dependencies {
-                stage('Build Backend')
-            }
+          
         }
 
         
@@ -93,9 +89,7 @@ pipeline {
                     sh 'npm audit fix --audit-level=critical --force'
                 }
             }
-            dependencies {
-                stage('Build Backend')
-            }
+          
         }
         
         stage('Scan Frontend') {
@@ -105,9 +99,7 @@ pipeline {
                     sh 'npm audit fix --audit-level=critical --force'
                 }
             }
-            dependencies {
-                stage('Build Frontend')
-            }
+           
         }
         
         stage('Deploy Infrastructure') {
@@ -137,12 +129,7 @@ pipeline {
                 --output text >> ansible/inventory.txt
                 '''
             }
-            dependencies {
-                stage('Test Frontend')
-                stage('Test Backend')
-                stage('Scan Frontend')
-                stage('Scan Backend')
-            }
+           
         }
         
         stage('Configure Infrastructure') {
@@ -153,9 +140,7 @@ pipeline {
                 sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml'
                }
             }
-            dependencies {
-                stage('Deploy Infrastructure')
-            }
+          
         }
         
     
@@ -178,9 +163,7 @@ pipeline {
                     sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
                 }
             }
-            dependencies {
-                stage('Run Migrations')
-            }
+          
         }
 
 
