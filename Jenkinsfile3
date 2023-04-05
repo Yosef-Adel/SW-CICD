@@ -15,12 +15,10 @@ pipeline {
         }
         steps {
             sh '''
-                mkdir frontend 
                 cd frontend
             '''
             checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git']])
             sh '''
-             cd frontend
              ls 
              pwd
            
