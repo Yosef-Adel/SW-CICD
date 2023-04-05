@@ -15,7 +15,11 @@ pipeline {
         }
         steps {
             checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git']])
-            sh 'ls &  npm install '
+            sh '''
+             ls 
+             pwd
+             npm install 
+             '''
             // npm build
             stash(name: 'frontend-build', includes: 'frontend/node_modules/**')
         }
@@ -35,6 +39,7 @@ pipeline {
             stash(name: 'backend-build', includes: 'backend/node_modules/**')
         }
         }
+
         stage('Test Frontend') {
         agent {
             docker {
