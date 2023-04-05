@@ -25,15 +25,13 @@ pipeline {
                     git branch: 'master',
                     url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git'
                     sh 'ls '
-                    sh 'npm install --unsafe-perm'
-                    sh 'rm -rf node_modules'
                     sh 'npm -v'
                     sh 'npm install'
                     sh 'npm build'
 
                 }
                 
-                stash(name: 'frontend-build', includes: 'frontend/node_modules/**')
+                // stash(name: 'frontend-build', includes: 'frontend/node_modules/**')
             }
 
         }
@@ -55,7 +53,7 @@ pipeline {
 
                 }
                 
-                stash(name: 'backend-build', includes: 'backend/node_modules/**')
+                // stash(name: 'backend-build', includes: 'backend/node_modules/**')
             }
         }
 
