@@ -24,6 +24,7 @@ pipeline {
                     git branch: 'master',
                     url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git'
                     sh 'ls '
+                    sh 'rm -rf node_modules'
                     sh 'npm -v'
                     sh 'npm install'
                     sh 'npm build'
