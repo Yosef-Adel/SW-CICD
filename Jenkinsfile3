@@ -15,16 +15,16 @@ pipeline {
         }
         steps {
             sh '''
+                rm -rf *
+                mkdir frontend
                 cd frontend
             '''
             checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git']])
-            sh '''
-                
-             ls 
-             pwd
-           
-             '''
-            // npm build
+            sh 'ls '
+            sh 'npm install'
+            sh 'npm run build'
+            sh 'npm run test'
+
             stash(name: 'frontend-build', includes: 'frontend/**')
         }
 
