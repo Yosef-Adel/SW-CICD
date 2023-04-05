@@ -10,7 +10,7 @@ pipeline {
         stage('Build Frontend') {
         agent {
             docker {
-            image 'node:16.17.0'
+            image 'node'
             }
         }
         steps {
