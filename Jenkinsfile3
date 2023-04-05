@@ -10,13 +10,14 @@ pipeline {
         stage('Clean Workspace') {
             steps {
                 deleteDir()
+                sh 'ls'
             }
         }
     
         stage('Build Frontend') {
             agent {
                 docker {
-                image 'node:16.20.0-alpine3.16'
+                image 'yosefadel/aws-node'
                 }
             }
             steps {
