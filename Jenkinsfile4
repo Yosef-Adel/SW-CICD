@@ -1,6 +1,5 @@
 pipeline {
- 
-
+  
     environment {
         GOCACHE = "${env.WORKSPACE}/.build_cache"
         ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key') 
