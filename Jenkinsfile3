@@ -16,7 +16,7 @@ pipeline {
         stage('Build Frontend') {
             agent {
                 docker {
-                image 'node'
+                image 'node:16.20.0-alpine3.16'
                 }
             }
             steps {
