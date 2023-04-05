@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        docker {image 'yosefadel/aws-node-ansible'}
-    }
+ 
 
     environment {
         GOCACHE = "${env.WORKSPACE}/.build_cache"
