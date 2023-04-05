@@ -6,6 +6,12 @@ pipeline {
         ENVVAER=credentials('ENVTXTGG') 
     }
     stages {
+    
+        stage('Clean Workspace') {
+        steps {
+            deleteDir()
+        }
+    
         stage('Build Frontend') {
             agent {
                 docker {
@@ -17,6 +23,7 @@ pipeline {
                     git branch: 'master',
                     url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git'
                     sh 'ls '
+                    sh 'sudo chown -R 115:122 "/.npm" '
                     sh 'npm -v'
                     sh 'rm -rf node_modules'
                     sh 'npm install'
