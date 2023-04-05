@@ -67,7 +67,7 @@ pipeline {
                    
                     sh 'ls '
                     sh 'npm install '
-                    sh 'npm run test >> backend-test.txt'
+                    sh 'npm run test 2> backend-test.txt'
                     
                     
                 }
