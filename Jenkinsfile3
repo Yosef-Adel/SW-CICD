@@ -6,7 +6,6 @@ pipeline {
         ENVVAER=credentials('ENVTXTGG') 
     }
     stages {
-    
         stage('Build Frontend') {
             agent {
                 docker {
@@ -18,6 +17,7 @@ pipeline {
                     git branch: 'master',
                     url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git'
                     sh 'ls '
+                    sh 'npm -v'
                     sh 'npm install'
                     sh 'node build'
 
