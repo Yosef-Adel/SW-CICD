@@ -28,9 +28,8 @@ pipeline {
 
                 dir('backend') {
                     checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
-                    sh 'ls'
-                    sh 'cat $ENVVAER >> .env'
                     sh 'ls -a'
+                    
                 }
             }
         }
@@ -149,7 +148,8 @@ pipeline {
             steps {
                 dir('backend') {
                     sh 'ls'
-                    sh 'rm -rf node_modules'
+                    sh 'rm -rf node_modules .git'
+                    sh 'cat $ENVVAER >> .env'
                     // sh 'npm test '
                     // sh 'npm build'
                 }
