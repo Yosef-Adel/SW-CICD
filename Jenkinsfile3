@@ -54,7 +54,7 @@ pipeline {
 
                 }
                 
-                // stash(name: 'backend-build', includes: 'backend/node_modules/**')
+                 stash(name: 'backend-build', includes: 'backend/**')
             }
         }
 
@@ -72,7 +72,7 @@ pipeline {
         stage('Test Backend') {
         agent {
             docker {
-            image 'node:16.17.0'
+            image 'node'
             }
         }
         steps {
