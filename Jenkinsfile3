@@ -43,18 +43,31 @@ pipeline {
                 image 'node'
                 }
             }
-            
             steps {
                 dir('backend') {
                     git branch: 'main',
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project'
                     sh 'ls '
                     sh 'npm install '
-                    // sh 'node build'
-
+                    // sh 'npm run build'
+                    // Copy all files generated in the build step to the workspace directory
+                    sh 'cp -R . $WORKSPACE'
                 }
-                
-                 stash(name: 'backend-build', includes: 'backend/**')
+            }
+        }
+     
+        stage('Test Backend') {
+            agent {
+                docker {
+                image 'node'
+                }
+            }
+            steps {
+                // Copy all files from the workspace directory to the current directory
+                sh 'cp -R $WORKSPACE/. .'
+                sh 'ls'
+                // sh 'npm install'
+                // sh 'npm run test >> backend-test.txt'
             }
         }
 
@@ -69,23 +82,6 @@ pipeline {
         //     sh 'cd frontend && npm install && npm run test'
         // }
         // }
-        stage('Test Backend') {
-        agent {
-            docker {
-            image 'node'
-            }
-        }
-        steps {
-            unstash 'backend-build'
-            sh 'ls'
-            sh 'cd backend'
-            sh 'ls'
-            sh 'npm install'
-            sh 'npm run test >> backend-test.txt'
-
-        }
-        
-        }
         // stage('Scan Frontend') {
         // agent {
         //     docker {
