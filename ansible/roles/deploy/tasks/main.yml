@@ -26,11 +26,11 @@
   become: True
   shell: |
     apt -y install nginx
-    rm -rf /etc/nginx/conf.d/default.conf
+    rm -rf /etc/nginx/sites-available/default
 
 - copy:
-    src: roles/deploy/tasks/default.conf
-    dest: /etc/nginx/conf.d/default.conf
+    src: roles/deploy/tasks/default
+    dest: /etc/nginx/sites-available/default
 
 
 - name: check NGINX
