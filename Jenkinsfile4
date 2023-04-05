@@ -1,0 +1,223 @@
+pipeline {
+    agent docker { image 'yosefadel/aws-node-ansible' }
+
+
+    environment {
+        GOCACHE = "${env.WORKSPACE}/.build_cache"
+        ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key') 
+        ENVVAER=credentials('ENVTXTGG') 
+        WORKFLOW_ID = "${BUILD_ID}"
+      
+    }
+
+        
+    stages {
+        stage('Source Frontend') {
+            steps {
+               dir('frontend') {
+                    checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
+                    sh 'ls'
+                }
+            }
+        }
+        
+        stage('Source Backend') {
+            steps {
+
+                dir('backend') {
+                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
+                    sh 'ls'
+                    sh 'cat $ENVVAER >> .env'
+                    sh 'ls -a'
+                }
+            }
+        }
+        
+
+        stage('Build Frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'ls'
+                    sh 'npm install'
+                    // sh 'npm build'
+                }
+            }
+        }
+        
+        stage('Build Backend') {
+            steps {
+                dir('backend') {
+                    sh 'ls'
+                    sh 'npm install '
+                    // sh 'npm build'
+                }
+            }
+        }
+
+
+
+
+        stage('Test Frontend') {
+            steps {
+                 dir('frontend') {
+                    sh 'ls'
+                    // sh 'npm test'
+                    // sh 'npm build'
+                }
+            }
+            dependencies {
+                stage('Build Frontend')
+            }
+        }
+        
+        stage('Test Backend') {
+            steps {
+                dir('backend') {
+                    sh 'ls'
+                    // sh 'npm test '
+                    // sh 'npm build'
+                }
+            }
+            dependencies {
+                stage('Build Backend')
+            }
+        }
+
+        
+        stage('Scan Backend') {
+            steps {
+                dir('backend') {
+                    sh 'ls'
+                    sh 'npm audit fix --audit-level=critical --force'
+                }
+            }
+            dependencies {
+                stage('Build Backend')
+            }
+        }
+        
+        stage('Scan Frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'ls'
+                    sh 'npm audit fix --audit-level=critical --force'
+                }
+            }
+            dependencies {
+                stage('Build Frontend')
+            }
+        }
+        
+        stage('Deploy Infrastructure') {
+            when {
+                branch 'master'
+            }
+            steps {
+                sh '''
+                aws cloudformation deploy \
+                --template-file files/backend.yml \
+                --tags Project=SW-project \
+                --stack-name "SW-project-backend-${WORKFLOW_ID}" \
+                --parameter-overrides ID="${WORKFLOW_ID}"
+                '''
+                // sh '''
+                // aws cloudformation deploy \
+                //     --template-file files/frontend.yml \
+                //     --tags Project=SW-project \
+                //     --stack-name "SW-project-frontend-${WORKFLOW_ID}" \
+                //     --parameter-overrides ID="${WORKFLOW_ID}"
+                // '''
+
+                sh ''' 
+                aws ec2 describe-instances \
+                --filters "Name=tag:Name,Values=backend-${WORKFLOW_ID}" \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --output text >> ansible/inventory.txt
+                '''
+            }
+            dependencies {
+                stage('Test Frontend')
+                stage('Test Backend')
+                stage('Scan Frontend')
+                stage('Scan Backend')
+            }
+        }
+        
+        stage('Configure Infrastructure') {
+            steps {
+               dir('ansible') {
+                sh 'ls'
+                sh 'cat inventory.txt'
+                sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml'
+               }
+            }
+            dependencies {
+                stage('Deploy Infrastructure')
+            }
+        }
+        
+    
+        
+        stage('Deploy Backend') {
+            steps {
+                dir('backend') {
+                    sh 'ls'
+                    sh 'rm -rf node_modules'
+                    // sh 'npm test '
+                    // sh 'npm build'
+                }
+
+                sh 'tar -czf artifact.tar.gz backend'
+                sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
+                
+                dir('ansible') {
+                    sh 'ls'
+                    sh 'cat inventory.txt'
+                    sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
+                }
+            }
+            dependencies {
+                stage('Run Migrations')
+            }
+        }
+
+        
+        
+        // stage('Deploy Frontend') {
+        //     steps {
+        //         // add commands to deploy frontend
+        //     }
+        //     dependencies {
+        //         stage('Run Migrations')
+        //     }
+        // }
+        
+        // stage('Smoke Test') {
+        //     steps {
+        //         // add commands to run smoke test
+        //     }
+        //     dependencies {
+        //         stage('Deploy Backend')
+        //         stage('Deploy Frontend')
+        //     }
+        // }
+        
+        // stage('Cloudfront Update') {
+        //     steps {
+        //         // add commands to update cloudfront
+        //     }
+        //     dependencies {
+        //         stage('Smoke Test')
+        //     }
+        // }
+        
+        // stage('Cleanup') {
+        //     steps {
+        //         // add commands to clean up
+        //     }
+        //     dependencies {
+        //         stage('Cloudfront Update')
+        //     }
+        // }
+    }
+}

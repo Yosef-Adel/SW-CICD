@@ -1,4 +1,4 @@
-FROM circleci/node:13.8.0
+FROM circleci/node:16.13.1-bullseye-browsers-legacy
 
 # docker build -t <your-dockerhub-acc>/aws-node .
 # docker push <your-dockerhub-acc>/aws-node
