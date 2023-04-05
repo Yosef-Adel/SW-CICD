@@ -67,12 +67,11 @@ pipeline {
                    
                     sh 'ls '
                     sh 'npm install '
-                    // sh 'npm run build'
-                    // Copy all files generated in the build step to the workspace directory
+                    sh 'npm run test >> backend-test.txt'
+                    
                     
                 }
-                // sh 'npm install'
-                // sh 'npm run test >> backend-test.txt'
+                
             }
         }
 
