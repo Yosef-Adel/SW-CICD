@@ -18,6 +18,7 @@ pipeline {
                     url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git'
                     sh 'ls '
                     sh 'npm -v'
+                    sh 'rm -rf node_modules'
                     sh 'npm install'
                     sh 'node build'
 
