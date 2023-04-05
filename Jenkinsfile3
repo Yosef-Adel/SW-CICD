@@ -50,7 +50,7 @@ pipeline {
                     url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project'
                     sh 'ls '
                     sh 'npm install '
-                    sh 'node build'
+                    // sh 'node build'
 
                 }
                 
