@@ -5,6 +5,7 @@ pipeline {
         ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key') 
         ENVVAER=credentials('ENVTXTGG') 
     }
+
     stages {
     
         stage('Clean Workspace') {
@@ -14,27 +15,27 @@ pipeline {
             }
         }
     
-        stage('Build Frontend') {
-            agent {
-                docker {
-                image 'node'
-                }
-            }
-            steps {
-                dir('frontend') {
-                    git branch: 'master',
-                    url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git'
-                    sh 'ls '
-                    sh 'npm -v'
-                    sh 'npm install'
-                    sh 'npm build'
+        // stage('Build Frontend') {
+        //     agent {
+        //         docker {
+        //         image 'node'
+        //         }
+        //     }
+        //     steps {
+        //         dir('frontend') {
+        //             git branch: 'master',
+        //             url: 'https://github.com/Yosef-Adel/SW-FRNT-Project.git'
+        //             sh 'ls '
+        //             sh 'npm -v'
+        //             sh 'npm install'
+        //             sh 'npm build'
 
-                }
+        //         }
                 
-                // stash(name: 'frontend-build', includes: 'frontend/node_modules/**')
-            }
+        //         // stash(name: 'frontend-build', includes: 'frontend/node_modules/**')
+        //     }
 
-        }
+        // }
 
         stage('Build Backend') {
             agent {
@@ -57,17 +58,17 @@ pipeline {
             }
         }
 
-        stage('Test Frontend') {
-        agent {
-            docker {
-            image 'node:16.17.0'
-            }
-        }
-        steps {
-            unstash 'frontend-build'
-            sh 'cd frontend && npm install && npm run test'
-        }
-        }
+        // stage('Test Frontend') {
+        // agent {
+        //     docker {
+        //     image 'node:16.17.0'
+        //     }
+        // }
+        // steps {
+        //     unstash 'frontend-build'
+        //     sh 'cd frontend && npm install && npm run test'
+        // }
+        // }
         stage('Test Backend') {
         agent {
             docker {
@@ -78,18 +79,18 @@ pipeline {
             unstash 'backend-build'
             sh 'cd backend && npm install && npm run test'
         }
-        }
-        stage('Scan Frontend') {
-        agent {
-            docker {
-            image 'node:16.17.0'
-            }
-        }
-        steps {
-            unstash 'frontend-build'
-            sh 'cd frontend && npm install && npm audit fix --audit-level=critical --force'
-        }
-        }
+        // }
+        // stage('Scan Frontend') {
+        // agent {
+        //     docker {
+        //     image 'node:16.17.0'
+        //     }
+        // }
+        // steps {
+        //     unstash 'frontend-build'
+        //     sh 'cd frontend && npm install && npm audit fix --audit-level=critical --force'
+        // }
+        // }
         stage('Scan Backend') {
         agent {
             docker {
@@ -101,12 +102,14 @@ pipeline {
             sh 'cd backend && npm install && npm audit fix --audit-level=critical --force'
         }
         }
+
         stage('Deploy Infrastructure') {
         agent {
             docker {
             image 'amazon/aws-cli'
             }
         }
+
         steps {
             sh 'yum install -y tar gzip'
 
@@ -118,13 +121,14 @@ pipeline {
                 --parameter-overrides ID=\"${WORKFLOW_ID}\"
             """
 
-            sh """
-            aws cloudformation deploy \
-                --template-file files/frontend.yml \
-                --tags Project=SW-project \
-                --stack-name \"SW-project-frontend-${WORKFLOW_ID}\" \
-                --parameter-overrides ID=\"${WORKFLOW_ID}\"
-            """
+            // sh """
+            // aws cloudformation deploy \
+            //     --template-file files/frontend.yml \
+            //     --tags Project=SW-project \
+            //     --stack-name \"SW-project-frontend-${WORKFLOW_ID}\" \
+            //     --parameter-overrides ID=\"${WORKFLOW_ID}\"
+            // """
+            
             sh ' echo "[web]" >> ansible/inventory.txt '
             sh """
             aws ec2 describe-instances \
@@ -136,7 +140,9 @@ pipeline {
             stash(name: 'inventory', includes: 'ansible/inventory.txt')
            
         }
+
         }
+
         stage('configure-infrastructure') {
         steps {
             unstash 'invFile'
