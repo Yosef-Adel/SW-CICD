@@ -77,7 +77,10 @@ pipeline {
         }
         steps {
             unstash 'backend-build'
-            sh 'cd backend && npm install && npm run test'
+            sh 'cd backend'
+            sh 'npm install'
+            sh 'npm run test >> backend-test.txt'
+            
         }
         
         }
