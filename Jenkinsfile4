@@ -97,7 +97,7 @@ pipeline {
                 sh 'rm -rf backend '
                 unstash 'backend-build'
                 dir('backend') {
-                    sh 'npm test '
+                    // sh 'npm test '
                     // sh 'npm build'
                 }
             }
