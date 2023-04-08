@@ -50,7 +50,7 @@ pipeline {
             }
             steps {
                 sh 'ls'
-                sh 'rm -rf * '
+                sh 'rm -rf backend '
                 sh 'ls'
 
                 unstash 'backend-build'
@@ -58,7 +58,7 @@ pipeline {
 
                 dir('backend') {
                     sh 'ls'
-                    // sh 'npm install '
+                    sh 'npm install '
                     // sh 'npm build'
                 }
             }
