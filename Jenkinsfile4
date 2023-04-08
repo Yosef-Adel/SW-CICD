@@ -44,7 +44,7 @@ pipeline {
                 dir('frontend') {
                     sh 'ls'
                     sh 'npm install'
-                    sh 'npm build'
+                    // sh 'npm build'
                 }
 
                 stash(name: 'frontend-build', includes: 'frontend/**')
