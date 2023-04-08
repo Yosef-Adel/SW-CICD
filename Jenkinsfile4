@@ -146,28 +146,30 @@ pipeline {
                 }
             }
             steps {
-                sh '''
-                aws cloudformation deploy \
-                --template-file files/backend.yml \
-                --tags Project=SW-project \
-                --stack-name "SW-project-backend-${WORKFLOW_ID}" \
-                --parameter-overrides ID="${WORKFLOW_ID}"
-                '''
-                // sh '''
-                // aws cloudformation deploy \
-                //     --template-file files/frontend.yml \
-                //     --tags Project=SW-project \
-                //     --stack-name "SW-project-frontend-${WORKFLOW_ID}" \
-                //     --parameter-overrides ID="${WORKFLOW_ID}"
-                // '''
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh '''
+                    aws cloudformation deploy \
+                    --template-file files/backend.yml \
+                    --tags Project=SW-project \
+                    --stack-name "SW-project-backend-${WORKFLOW_ID}" \
+                    --parameter-overrides ID="${WORKFLOW_ID}"
+                    '''
+                    // sh '''
+                    // aws cloudformation deploy \
+                    //     --template-file files/frontend.yml \
+                    //     --tags Project=SW-project \
+                    //     --stack-name "SW-project-frontend-${WORKFLOW_ID}" \
+                    //     --parameter-overrides ID="${WORKFLOW_ID}"
+                    // '''
 
-                sh ''' 
-                aws ec2 describe-instances \
-                --filters "Name=tag:Name,Values=backend-${WORKFLOW_ID}" \
-                --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                --output text >> ansible/inventory.txt
-                '''
-                stash name: 'invFile', includes: 'ansible/inventory.txt'
+                    sh ''' 
+                    aws ec2 describe-instances \
+                    --filters "Name=tag:Name,Values=backend-${WORKFLOW_ID}" \
+                    --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                    --output text >> ansible/inventory.txt
+                    '''
+                    stash name: 'invFile', includes: 'ansible/inventory.txt'
+                }
             }
 
            
@@ -189,7 +191,6 @@ pipeline {
           
         }
         
-    
         
         stage('Deploy Backend') {
              agent {
@@ -228,6 +229,7 @@ pipeline {
         //     }
         // }
         
+
         // stage('Smoke Test') {
         //     steps {
         //         // add commands to run smoke test
@@ -238,6 +240,7 @@ pipeline {
         //     }
         // }
         
+
         // stage('Cloudfront Update') {
         //     steps {
         //         // add commands to update cloudfront
@@ -247,6 +250,7 @@ pipeline {
         //     }
         // }
         
+
         // stage('Cleanup') {
         //     steps {
         //         // add commands to clean up
@@ -255,5 +259,7 @@ pipeline {
         //         stage('Cloudfront Update')
         //     }
         // }
+
+
     }
 }
