@@ -133,76 +133,89 @@ pipeline {
                 unstash 'frontend-build'
                 dir('frontend') {
                     
-                    sh 'npm audit fix --audit-level=critical --force'
+                    // sh 'npm audit fix --audit-level=critical --force'
                 }
             }
            
         }
         
-        // stage('Deploy Infrastructure') {
-        //     when {
-        //         branch 'master'
-        //     }
-        //     steps {
-        //         sh '''
-        //         aws cloudformation deploy \
-        //         --template-file files/backend.yml \
-        //         --tags Project=SW-project \
-        //         --stack-name "SW-project-backend-${WORKFLOW_ID}" \
-        //         --parameter-overrides ID="${WORKFLOW_ID}"
-        //         '''
-        //         // sh '''
-        //         // aws cloudformation deploy \
-        //         //     --template-file files/frontend.yml \
-        //         //     --tags Project=SW-project \
-        //         //     --stack-name "SW-project-frontend-${WORKFLOW_ID}" \
-        //         //     --parameter-overrides ID="${WORKFLOW_ID}"
-        //         // '''
+        stage('Deploy Infrastructure') {
+            agent {
+                docker {
+                    image 'amazon/aws-cli'
+                }
+            }
+            steps {
+                sh '''
+                aws cloudformation deploy \
+                --template-file files/backend.yml \
+                --tags Project=SW-project \
+                --stack-name "SW-project-backend-${WORKFLOW_ID}" \
+                --parameter-overrides ID="${WORKFLOW_ID}"
+                '''
+                // sh '''
+                // aws cloudformation deploy \
+                //     --template-file files/frontend.yml \
+                //     --tags Project=SW-project \
+                //     --stack-name "SW-project-frontend-${WORKFLOW_ID}" \
+                //     --parameter-overrides ID="${WORKFLOW_ID}"
+                // '''
 
-        //         sh ''' 
-        //         aws ec2 describe-instances \
-        //         --filters "Name=tag:Name,Values=backend-${WORKFLOW_ID}" \
-        //         --query 'Reservations[*].Instances[*].PublicIpAddress' \
-        //         --output text >> ansible/inventory.txt
-        //         '''
-        //     }
+                sh ''' 
+                aws ec2 describe-instances \
+                --filters "Name=tag:Name,Values=backend-${WORKFLOW_ID}" \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --output text >> ansible/inventory.txt
+                '''
+                stash name: 'invFile', includes: 'ansible/inventory.txt'
+            }
+
            
-        // }
+        }
         
-        // stage('Configure Infrastructure') {
-        //     steps {
-        //        dir('ansible') {
-               
-        //         sh 'cat inventory.txt'
-        //         sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml'
-        //        }
-        //     }
+        stage('Configure Infrastructure') {
+             agent {
+                docker {
+                    image 'yosefadel/aws-node'
+                }
+            }
+            steps {
+                unstash 'invFile'
+                dir('ansible') {
+                sh 'cat inventory.txt'
+                sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml'
+               }
+            }
           
-        // }
+        }
         
     
         
-        // stage('Deploy Backend') {
-        //     steps {
-        //         dir('backend') {
+        stage('Deploy Backend') {
+             agent {
+                docker {
+                    image 'yosefadel/aws-node'
+                }
+            }
+            steps {
+                unstash 'invFile'
+                dir('backend') {
                   
-        //             sh 'rm -rf node_modules .git'
-        //             sh 'cat $ENVVAER >> .env'
-        //             // sh 'npm test '
-        //             // sh 'npm build'
-        //         }
+                    sh 'rm -rf node_modules .git'
+                    sh 'cat $ENVVAER >> .env'
+                }
 
-        //         sh 'tar -czf artifact.tar.gz backend'
-        //         sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
+                sh 'tar -czf artifact.tar.gz backend'
+                sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
                 
-        //         dir('ansible') {
+                dir('ansible') {
                    
-        //             sh 'cat inventory.txt'
-        //             sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
-        //         }
-        //     }
+                    sh 'cat inventory.txt'
+                    sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
+                }
+            }
           
-        // }
+        }
 
 
         
