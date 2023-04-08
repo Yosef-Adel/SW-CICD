@@ -43,7 +43,7 @@ pipeline {
                 unstash 'frontend-code'
                 dir('frontend') {
                     sh 'ls'
-                    // sh 'npm install'
+                    sh 'npm install'
                     // sh 'npm build'
                 }
 
@@ -145,25 +145,37 @@ pipeline {
                     image 'amazon/aws-cli'
                 }
             }
+            environment {
+                AWS_DEFAULT_REGION="us-east-1"
+            }
             steps {
-                  withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     sh '''
-                        aws cloudformation deploy \
-                        --template-file files/backend.yml \
-                        --tags Project=SW-project \
-                        --stack-name "SW-project-backend-${BUILD_ID}" \
-                        --parameter-overrides ID="${BUILD_ID}"
-                        echo "[web]" >> ansible/inventory.txt
-                        aws ec2 describe-instances \
-                        --filters "Name=tag:Name,Values=backend-${BUILD_ID}" \
-                        --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                        --output text >> ansible/inventory.txt
+                    aws cloudformation deploy \
+                    --template-file files/backend.yml \
+                    --tags Project=SW-project \
+                    --stack-name "SW-project-backend-${WORKFLOW_ID}" \
+                    --parameter-overrides ID="${WORKFLOW_ID}"
+                    '''
+                    // sh '''
+                    // aws cloudformation deploy \
+                    //     --template-file files/frontend.yml \
+                    //     --tags Project=SW-project \
+                    //     --stack-name "SW-project-frontend-${WORKFLOW_ID}" \
+                    //     --parameter-overrides ID="${WORKFLOW_ID}"
+                    // '''
+
+                    sh ''' 
+                    aws ec2 describe-instances \
+                    --filters "Name=tag:Name,Values=backend-${WORKFLOW_ID}" \
+                    --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                    --output text >> ansible/inventory.txt
                     '''
                     stash name: 'invFile', includes: 'ansible/inventory.txt'
+                }
             }
 
            
-        }
         }
         
         stage('Configure Infrastructure') {
