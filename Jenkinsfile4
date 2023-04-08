@@ -41,31 +41,31 @@ pipeline {
                 unstash 'frontend-code'
                 dir('frontend') {
                     sh 'ls'
-                    // sh 'npm install'
-                    // sh 'npm build'
+                    sh 'npm install'
+                    sh 'npm run build'
                 }
 
                 stash(name: 'frontend-build', includes: 'frontend/**')
             }
         }
         
-        stage('Build Backend') {
-            agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
-                sh 'rm -rf backend '
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'npm install '
-                    // sh 'npm build'
-                }
-                stash(name: 'backend-build', includes: 'backend/**')
+        // stage('Build Backend') {
+        //     agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
+        //         sh 'rm -rf backend '
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             sh 'npm install '
+        //             // sh 'npm build'
+        //         }
+        //         stash(name: 'backend-build', includes: 'backend/**')
 
-            }
-        }
+        //     }
+        // }
 
 
         stage('Test Frontend') {
@@ -79,63 +79,63 @@ pipeline {
                 unstash 'frontend-build'
                 dir('frontend') {
                     // sh 'npm test'
-                    // sh 'npm build'
+                   
                 }
             }
             
         }
         
-        stage('Test Backend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
-                sh 'rm -rf backend '
-                unstash 'backend-build'
-                dir('backend') {
-                    // sh 'npm test '
-                    // sh 'npm build'
-                }
-            }
+        // stage('Test Backend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
+        //         sh 'rm -rf backend '
+        //         unstash 'backend-build'
+        //         dir('backend') {
+        //             // sh 'npm test '
+                   
+        //         }
+        //     }
           
-        }
+        // }
 
         
-        stage('Scan Backend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
-                sh 'rm -rf backend '
-                unstash 'backend-build'
-                dir('backend') {
+        // stage('Scan Backend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
+        //         sh 'rm -rf backend '
+        //         unstash 'backend-build'
+        //         dir('backend') {
                     
-                    sh 'npm audit fix --audit-level=critical --force'
-                }
-            }
+        //             sh 'npm audit fix --audit-level=critical --force'
+        //         }
+        //     }
           
-        }
+        // }
         
-        stage('Scan Frontend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
-                sh 'rm -rf frontend '
-                unstash 'frontend-build'
-                dir('frontend') {
+        // stage('Scan Frontend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
+        //         sh 'rm -rf frontend '
+        //         unstash 'frontend-build'
+        //         dir('frontend') {
                     
-                    // sh 'npm audit fix --audit-level=critical --force'
-                }
-            }
+        //             // sh 'npm audit fix --audit-level=critical --force'
+        //         }
+        //     }
            
-        }
+        // }
         
         stage('Deploy Infrastructure') {
               agent {
@@ -147,91 +147,121 @@ pipeline {
             }
             steps {
                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    sh '''
+                    // sh ''' 
+                    //     aws cloudformation deploy \
+                    //     --template-file files/backend.yml \
+                    //     --tags Project=SW-project \
+                    //     --stack-name "SW-project-backend-${BUILD_ID}" \
+                    //     --parameter-overrides ID="${BUILD_ID}"
+                    
+                    // '''
+                    sh ''' 
                         aws cloudformation deploy \
-                        --template-file files/backend.yml \
+                        --template-file files/frontend.yml \
                         --tags Project=SW-project \
-                        --stack-name "SW-project-backend-${BUILD_ID}" \
-                        --parameter-overrides ID="${BUILD_ID}"
-                        echo "[web]" >> ansible/inventory.txt
-                        aws ec2 describe-instances \
-                        --filters "Name=tag:Name,Values=backend-${BUILD_ID}" \
-                        --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                        --output text >> ansible/inventory.txt
+                        --stack-name "SW-project-frontend-${BUILD_ID}" \
+                        --parameter-overrides ID="${BUILD_ID}"    
+                    
                     '''
-                    stash name: 'invFile', includes: 'ansible/inventory.txt'
+
+                    // sh '''
+                    //     echo "[web]" >> ansible/inventory.txt
+
+                    //     aws ec2 describe-instances \
+                    //     --filters "Name=tag:Name,Values=backend-${BUILD_ID}" \
+                    //     --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                    //     --output text >> ansible/inventory.txt
+                    // '''
+                    // stash name: 'invFile', includes: 'ansible/inventory.txt'
                 }
             }
 
            
         }
         
-        stage('Configure Infrastructure') {
-             agent {
-                docker {
-                    image 'yosefadel/aws-node'
-                }
-            }
-            environment {
+        // stage('Configure Infrastructure') {
+        //      agent {
+        //         docker {
+        //             image 'yosefadel/aws-node'
+        //         }
+        //     }
+        //     environment {
                 
-                ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
-            }
-            steps {
-                unstash 'invFile'
-                dir('ansible') {
-                    sh ''' 
-                        cat inventory.txt 
-                        cat $ANSIBLE_PRIVATE_KEY
-                        echo "Test Webhook"
-                        ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
-                    '''
-               }
-            }
-          
-        }
-        
-        
-        stage('Deploy Backend') {
-             agent {
-                docker {
-                    image 'yosefadel/aws-node'
-                }
-            }
-            environment {
-                
-                ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
-                ENVVAER=credentials('ENVTXTGG') 
-            }
-            steps {
-                unstash 'invFile'
-                dir('backend') {
-                  
-                    sh 'rm -rf node_modules .git'
-                    sh 'cat $ENVVAER >> .env'
-                }
-
-                sh 'tar -czf artifact.tar.gz backend'
-                sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
-                
-                dir('ansible') {
-                   
-                    sh 'cat inventory.txt'
-                    sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
-                }
-            }
-          
-        }
-
-
-        
-        // stage('Deploy Frontend') {
+        //         ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
+        //     }
         //     steps {
-        //         // add commands to deploy frontend
+        //         unstash 'invFile'
+        //         dir('ansible') {
+        //             sh ''' 
+        //                 cat inventory.txt 
+        //                 cat $ANSIBLE_PRIVATE_KEY
+        //                 echo "Test Webhook"
+        //                 ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
+        //             '''
+        //        }
         //     }
-        //     dependencies {
-        //         stage('Run Migrations')
-        //     }
+          
         // }
+        
+        
+        // stage('Deploy Backend') {
+        //      agent {
+        //         docker {
+        //             image 'yosefadel/aws-node'
+        //         }
+        //     }
+        //     environment {
+                
+        //         ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
+        //         ENVVAER=credentials('ENVTXTGG') 
+        //     }
+        //     steps {
+        //         unstash 'invFile'
+        //         dir('backend') {
+                  
+        //             sh 'rm -rf node_modules .git'
+        //             sh 'cat $ENVVAER >> .env'
+        //         }
+
+        //         sh 'tar -czf artifact.tar.gz backend'
+        //         sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
+                
+        //         dir('ansible') {
+                   
+        //             sh 'cat inventory.txt'
+        //             sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
+        //         }
+        //     }
+          
+        // }
+
+
+        
+        stage('Deploy Frontend') {
+             agent {
+                docker {
+                    image 'yosefadel/aws-node'
+                }
+            }
+            environment {
+                AWS_DEFAULT_REGION="us-east-1"
+                
+            }
+            steps {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    unstash 'frontend-build'
+                    unstash 'invFile'
+                    dir('frontend') {
+                        sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
+                        // sh 'npm install'
+                        // sh 'npm run build'
+                        sh 'tar -czvf artifact-"${BUILD_ID}".tar.gz build'
+                        sh 'aws s3 cp dist s3://SW-project-${BUILD_ID} --recursive'
+                        
+                    }
+                }
+            }
+        }
         
 
         // stage('Smoke Test') {
