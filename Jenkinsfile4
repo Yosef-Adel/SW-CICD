@@ -81,7 +81,7 @@ pipeline {
                 unstash 'frontend-build'
                 dir('frontend') {
                     sh 'npm test'
-                    sh 'npm build'
+                    // sh 'npm build'
                 }
             }
             
@@ -98,7 +98,7 @@ pipeline {
                 unstash 'backend-build'
                 dir('backend') {
                     sh 'npm test '
-                    sh 'npm build'
+                    // sh 'npm build'
                 }
             }
           
