@@ -27,6 +27,7 @@ pipeline {
                     
                     
                 }
+                stash(name: 'backend-build', includes: 'backend/**')
             }
         }
         
@@ -48,6 +49,13 @@ pipeline {
             }
             }
             steps {
+                sh 'ls'
+                sh 'rm -rf * '
+                sh 'ls'
+
+                unstash 'backend-build'
+                sh 'ls'
+
                 dir('backend') {
                     sh 'ls'
                     // sh 'npm install '
