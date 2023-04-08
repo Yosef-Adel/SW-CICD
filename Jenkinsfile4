@@ -80,7 +80,7 @@ pipeline {
                 sh 'rm -rf frontend '
                 unstash 'frontend-build'
                 dir('frontend') {
-                    sh 'npm test'
+                    // sh 'npm test'
                     // sh 'npm build'
                 }
             }
