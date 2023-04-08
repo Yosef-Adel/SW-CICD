@@ -2,8 +2,6 @@ pipeline {
     agent any
     environment {
         GOCACHE = "${env.WORKSPACE}/.build_cache"
-        
-        ENVVAER=credentials('ENVTXTGG') 
         WORKFLOW_ID = "${BUILD_ID}"
       
     }
@@ -202,6 +200,7 @@ pipeline {
             environment {
                 
                 ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
+                ENVVAER=credentials('ENVTXTGG') 
             }
             steps {
                 unstash 'invFile'
