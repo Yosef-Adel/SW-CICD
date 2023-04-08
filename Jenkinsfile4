@@ -49,8 +49,8 @@ pipeline {
             }
             steps {
                 dir('backend') {
-                    
-                    sh 'npm install '
+                    sh 'ls'
+                    // sh 'npm install '
                     // sh 'npm build'
                 }
             }
