@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         GOCACHE = "${env.WORKSPACE}/.build_cache"
-        ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key') 
+        
         ENVVAER=credentials('ENVTXTGG') 
         WORKFLOW_ID = "${BUILD_ID}"
       
@@ -145,6 +145,7 @@ pipeline {
             }
             environment {
                 AWS_DEFAULT_REGION="us-east-1"
+                
             }
             steps {
                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
@@ -173,11 +174,16 @@ pipeline {
                     image 'yosefadel/aws-node'
                 }
             }
+            environment {
+                
+                ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
+            }
             steps {
                 unstash 'invFile'
                 dir('ansible') {
                     sh ''' 
                         cat inventory.txt 
+                        cat $ANSIBLE_PRIVATE_KEY
                         echo "Test Webhook"
                         ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
                     '''
@@ -192,6 +198,10 @@ pipeline {
                 docker {
                     image 'yosefadel/aws-node'
                 }
+            }
+            environment {
+                
+                ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
             }
             steps {
                 unstash 'invFile'
