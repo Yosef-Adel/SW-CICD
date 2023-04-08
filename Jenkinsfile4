@@ -43,7 +43,7 @@ pipeline {
                 unstash 'frontend-code'
                 dir('frontend') {
                     sh 'ls'
-                    sh 'npm install'
+                    // sh 'npm install'
                     // sh 'npm build'
                 }
 

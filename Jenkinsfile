@@ -14,8 +14,7 @@ pipeline {
                     docker { image 'node' }
                 }
             steps {
-                sh 'rm -rf * '
-                unstash 'backend-build'
+             
                 dir('backend') {
 
                     git branch: 'main',
