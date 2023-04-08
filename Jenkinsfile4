@@ -42,6 +42,11 @@ pipeline {
         // }
         
         stage('Build Backend') {
+            agent {
+            docker {
+            image 'node:16.20.0'
+            }
+            }
             steps {
                 dir('backend') {
                     
