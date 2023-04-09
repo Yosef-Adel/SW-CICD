@@ -11,9 +11,17 @@ def destroy_environment(){
 }
 
 
+def fail_alert(stage_name){
 
+    slackSend color: 'danger', iconEmoji: '⛔️', message: '${stage_name} failed '
+    slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'تعبت يجدعان والله تعبت 💔'
 
+}
 
+def pass_alert(stage_name){
+    slackSend color: 'good', iconEmoji: '🥱', message: '${stage_name} Completed '
+    slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+}
 
 pipeline {
     agent any
@@ -29,6 +37,7 @@ pipeline {
                 slackSend color: 'good', iconEmoji: '💪', message: 'الله المستعان نبدأ الشغل ❤️'            
             }
         }
+
         stage('Source Frontend') {
             steps {
                dir('frontend') {
@@ -36,8 +45,12 @@ pipeline {
                     
                 }
                 stash(name: 'frontend-code', includes: 'frontend/**')
-                slackSend color: 'good', iconEmoji: '🥱', message: 'Source Frontend Completed '
-                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+                pass_alert("Source Frontend")
+            }
+            post {
+                failure {
+                    fail_alert("Source Frontend")
+                }
             }
         }
         
@@ -49,11 +62,14 @@ pipeline {
                     
                 }
                 stash(name: 'backend-code', includes: 'backend/**')
-                slackSend color: 'good', iconEmoji: '🥱', message: 'Source Backend Completed '
-                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+               pass_alert("Source Backend")
+            }
+            post {
+                failure {
+                    fail_alert("Source Backend")
+                }
             }
         }
-        
 
         stage('Build Frontend') {
             agent {
@@ -71,8 +87,13 @@ pipeline {
                 }
 
                 stash(name: 'frontend-build', includes: 'frontend/build/**')
-                slackSend color: 'good', iconEmoji: '🥱', message: 'Build Frontend Completed '
-                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+                pass_alert("Build Frontend")
+            
+            }
+            post {
+                failure {
+                    fail_alert("Build Frontend")
+                }
             }
         }
         
@@ -90,9 +111,12 @@ pipeline {
                     // sh 'npm build'
                 }
                 // stash(name: 'backend-build', includes: 'backend/build**')
-                slackSend color: 'good', iconEmoji: '🥱', message: 'Build Backend Completed '
-                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
-
+                pass_alert("Build Backend")
+            }
+            post {
+                failure {
+                    fail_alert("Build Backend")
+                }
             }
         }
 
@@ -111,8 +135,13 @@ pipeline {
                     // sh 'npm test'
                    
                 }
-                slackSend color: 'good', iconEmoji: '🥱', message: 'Test Frontend Completed '
-                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+                pass_alert("Test Frontend ")
+                
+            }
+            post {
+                failure {
+                    fail_alert("Test Frontend")
+                }
             }
             
         }
@@ -131,8 +160,12 @@ pipeline {
                     // sh 'npm test '
                    
                 }
-                slackSend color: 'good', iconEmoji: '🥱', message: 'Test Backend Completed '
-                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+                pass_alert("Test Backend ")
+            }
+            post {
+                failure {
+                    fail_alert("Test Backend")
+                }
             }
           
         }
@@ -151,8 +184,12 @@ pipeline {
                     // sh 'npm install '
                     // sh 'npm audit fix --audit-level=critical --force'
                 }
-                slackSend color: 'good', iconEmoji: '🥱', message: 'Scan Backend Completed '
-                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+                pass_alert("Scan Backend ")
+            }
+            post {
+                failure {
+                    fail_alert("Scan Backend")
+                }
             }
           
         }
@@ -170,8 +207,12 @@ pipeline {
                     // sh 'npm install '
                     // sh 'npm audit fix --audit-level=critical --force'
                 }
-                slackSend color: 'good', iconEmoji: '🥱', message: 'Scan Frontend Completed '
-                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+                pass_alert("Scan Frontend ")
+            }
+            post {
+                failure {
+                    fail_alert("Scan Frontend")
+                }
             }
            
         }
@@ -212,14 +253,13 @@ pipeline {
                         --output text >> ansible/inventory.txt
                     '''
                     stash name: 'invFile', includes: 'ansible/inventory.txt'
-
-                    slackSend color: 'good', iconEmoji: '🥱', message: 'Deploy Infrastructure Completed '
-                    slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+                    pass_alert("Deploy Infrastructure ")
+                  
                 }
             }
             post {
                 failure {
-                    
+                    fail_alert("Deploy Infrastructure ")
                     destroy_environment()
                 }
             }
@@ -247,12 +287,11 @@ pipeline {
                         ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
                     '''
                }
-                slackSend color: 'good', iconEmoji: '🥱', message: 'Configure Infrastructure Completed '
-                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+              pass_alert("Configure Infrastructure ")
             }
             post {
                 failure {
-                    
+                    fail_alert("Configure Infrastructure ")
                     destroy_environment()
                 }
             }
@@ -289,12 +328,11 @@ pipeline {
                 }
 
 
-                slackSend color: 'good', iconEmoji: '🥱', message: 'Deploy Backend Completed '
-                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+                pass_alert("Deploy Backend  ")
             }
             post {
                 failure {
-                    
+                    fail_alert("Deploy Backend  ")
                     destroy_environment()
                 }
             }
@@ -325,11 +363,11 @@ pipeline {
                         
                     }
                 }
-                slackSend color: 'good', iconEmoji: '🥱', message: 'Deploy Frontend Completed '
-                slackSend color: 'good', iconEmoji: '🥳', message: 'ناخد نفس عميق و اشوفك المره الجايه ان شاء الله ❤️'           
+            pass_alert("Deploy Frontend  ")     
             }
             post {
                 failure {
+                    fail_alert("Deploy Frontend  ")
                     destroy_environment()
                 }
             }
