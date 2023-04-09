@@ -36,6 +36,8 @@ pipeline {
                     
                 }
                 stash(name: 'frontend-code', includes: 'frontend/**')
+                slackSend color: 'good', iconEmoji: '🥱', message: 'Source Frontend Completed '
+                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
             }
         }
         
@@ -47,6 +49,8 @@ pipeline {
                     
                 }
                 stash(name: 'backend-code', includes: 'backend/**')
+                slackSend color: 'good', iconEmoji: '🥱', message: 'Source Backend Completed '
+                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
             }
         }
         
@@ -67,6 +71,8 @@ pipeline {
                 }
 
                 stash(name: 'frontend-build', includes: 'frontend/build/**')
+                slackSend color: 'good', iconEmoji: '🥱', message: 'Build Frontend Completed '
+                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
             }
         }
         
@@ -84,6 +90,8 @@ pipeline {
                     // sh 'npm build'
                 }
                 // stash(name: 'backend-build', includes: 'backend/build**')
+                slackSend color: 'good', iconEmoji: '🥱', message: 'Build Backend Completed '
+                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
 
             }
         }
@@ -103,6 +111,8 @@ pipeline {
                     // sh 'npm test'
                    
                 }
+                slackSend color: 'good', iconEmoji: '🥱', message: 'Test Frontend Completed '
+                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
             }
             
         }
@@ -121,6 +131,8 @@ pipeline {
                     // sh 'npm test '
                    
                 }
+                slackSend color: 'good', iconEmoji: '🥱', message: 'Test Backend Completed '
+                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
             }
           
         }
@@ -139,6 +151,8 @@ pipeline {
                     // sh 'npm install '
                     // sh 'npm audit fix --audit-level=critical --force'
                 }
+                slackSend color: 'good', iconEmoji: '🥱', message: 'Scan Backend Completed '
+                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
             }
           
         }
@@ -156,6 +170,8 @@ pipeline {
                     // sh 'npm install '
                     // sh 'npm audit fix --audit-level=critical --force'
                 }
+                slackSend color: 'good', iconEmoji: '🥱', message: 'Scan Frontend Completed '
+                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
             }
            
         }
@@ -196,6 +212,9 @@ pipeline {
                         --output text >> ansible/inventory.txt
                     '''
                     stash name: 'invFile', includes: 'ansible/inventory.txt'
+
+                    slackSend color: 'good', iconEmoji: '🥱', message: 'Deploy Infrastructure Completed '
+                    slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
                 }
             }
             post {
@@ -204,7 +223,7 @@ pipeline {
                     destroy_environment()
                 }
             }
-
+            
            
         }
         
@@ -228,6 +247,8 @@ pipeline {
                         ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
                     '''
                }
+                slackSend color: 'good', iconEmoji: '🥱', message: 'Configure Infrastructure Completed '
+                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
             }
             post {
                 failure {
@@ -266,6 +287,10 @@ pipeline {
                     sh 'cat inventory.txt'
                     sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
                 }
+
+
+                slackSend color: 'good', iconEmoji: '🥱', message: 'Deploy Backend Completed '
+                slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
             }
             post {
                 failure {
@@ -300,6 +325,8 @@ pipeline {
                         
                     }
                 }
+                slackSend color: 'good', iconEmoji: '🥱', message: 'Deploy Frontend Completed '
+                slackSend color: 'good', iconEmoji: '🥳', message: 'ناخد نفس عميق و اشوفك المره الجايه ان شاء الله ❤️'           
             }
             post {
                 failure {
