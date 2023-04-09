@@ -26,7 +26,7 @@ pipeline {
     stages {
         stage ('Start Pipeline'){
             steps {
-                slackSend color: 'good', iconEmoji: '💪', message: 'الله المستعان  build number ${BUILD_ID}'
+                slackSend color: 'good', iconEmoji: '💪', message: 'الله المستعان نبدأ الشغل ❤️'            
             }
         }
         stage('Source Frontend') {
