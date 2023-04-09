@@ -1,5 +1,5 @@
 Description: >
-  UdaPeople frontend stack.
+  SW-project frontend stack.
 
 Parameters:
   ID:
@@ -10,7 +10,7 @@ Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "udapeople-${ID}"
+      BucketName: !Sub "SW-project-${ID}"
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
