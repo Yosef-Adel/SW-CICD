@@ -10,7 +10,7 @@ Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "SW-project-${ID}"
+      BucketName: !Sub "sw-project-${ID}"
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
