@@ -14,7 +14,7 @@ def destroy_environment(){
 def fail_alert(stage_name){
 
     slackSend color: 'danger', iconEmoji: '⛔️', message: '${stage_name} failed '
-    slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'تعبت يجدعان والله تعبت 💔'
+    slackSend color: 'danger', iconEmoji: '👩‍🦯', message: 'تعبت يجدعان والله تعبت 💔'
 
 }
 
