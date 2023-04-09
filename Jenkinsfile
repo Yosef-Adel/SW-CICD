@@ -1,8 +1,13 @@
 def destroy_environment(){
+    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',AWS_DEFAULT_REGION:'us-east-1')]) {
+
     sh 'echo "Destroying environment "'
     sh 'aws cloudformation delete-stack --stack-name SW-project-backend-${BUILD_ID}'
     sh ' aws s3 rm s3://sw-project-${BUILD_ID} } --recursive'
     sh 'aws cloudformation delete-stack --stack-name SW-project-frontend-${BUILD_ID}'
+
+
+    }
 }
 
 
