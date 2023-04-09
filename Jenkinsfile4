@@ -3,7 +3,7 @@ pipeline {
     environment {
         GOCACHE = "${env.WORKSPACE}/.build_cache"
         WORKFLOW_ID = "${BUILD_ID}"
-        process.env.ci=false
+        CI = 'false'
     }
 
         
