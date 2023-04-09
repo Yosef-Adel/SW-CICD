@@ -19,142 +19,146 @@ pipeline {
     agent any
     environment {
         GOCACHE = "${env.WORKSPACE}/.build_cache"
-        WORKFLOW_ID = "${BUILD_ID}"
         CI = 'false'
     }
-
+    
         
     stages {
-        // stage('Source Frontend') {
-        //     steps {
-        //        dir('frontend') {
-        //             checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
+        stage ('Start Pipeline'){
+            steps {
+                slackSend color: 'good', iconEmoji: '💪', message: 'الله المستعان  build number ${BUILD_ID}'
+            }
+        }
+        stage('Source Frontend') {
+            steps {
+               dir('frontend') {
+                    checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
                     
-        //         }
-        //         stash(name: 'frontend-code', includes: 'frontend/**')
-        //     }
-        // }
+                }
+                stash(name: 'frontend-code', includes: 'frontend/**')
+            }
+        }
         
-        // stage('Source Backend') {
-        //     steps {
+        stage('Source Backend') {
+            steps {
 
-        //         dir('backend') {
-        //             checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
+                dir('backend') {
+                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
                     
-        //         }
-        //         stash(name: 'backend-code', includes: 'backend/**')
-        //     }
-        // }
+                }
+                stash(name: 'backend-code', includes: 'backend/**')
+            }
+        }
         
 
-        // stage('Build Frontend') {
-        //     agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
-        //         sh 'rm -rf frontend '
-        //         unstash 'frontend-code'
-        //         dir('frontend') {
-        //             sh 'ls'
-        //             // sh 'npm install'
-        //             // sh 'npm run build'
-        //         }
+        stage('Build Frontend') {
+            agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
+                deleteDir()
+                unstash 'frontend-code'
+                dir('frontend') {
+                    sh 'ls'
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
 
-        //         stash(name: 'frontend-build', includes: 'frontend/build/**')
-        //     }
-        // }
+                stash(name: 'frontend-build', includes: 'frontend/build/**')
+            }
+        }
         
-        // stage('Build Backend') {
-        //     agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
-        //         sh 'rm -rf backend '
-        //         unstash 'backend-code'
-        //         dir('backend') {
-        //             sh 'npm install '
-        //             sh 'npm build'
-        //         }
-        //         stash(name: 'backend-build', includes: 'backend/build**')
+        stage('Build Backend') {
+            agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
+                deleteDir()
+                unstash 'backend-code'
+                dir('backend') {
+                    sh 'npm install '
+                    // sh 'npm build'
+                }
+                // stash(name: 'backend-build', includes: 'backend/build**')
 
-        //     }
-        // }
+            }
+        }
 
 
-        // stage('Test Frontend') {
-        //      agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
-        //         sh 'rm -rf frontend '
-        //         unstash 'frontend-code'
-        //         dir('frontend') {
-        //             // sh 'npm install '
-        //             // sh 'npm test'
+        stage('Test Frontend') {
+             agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
+                deleteDir()
+                unstash 'frontend-code'
+                dir('frontend') {
+                    // sh 'npm install'
+                    // sh 'npm test'
                    
-        //         }
-        //     }
+                }
+            }
             
-        // }
+        }
         
-        // stage('Test Backend') {
-        //      agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
-        //         sh 'rm -rf backend '
-        //         unstash 'backend-code'
-        //         dir('backend') {
-        //             // sh 'npm install '
-        //             // sh 'npm test '
+        stage('Test Backend') {
+             agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
+                deleteDir()
+                unstash 'backend-code'
+                dir('backend') {
+                    // sh 'npm install'
+                    // sh 'npm test '
                    
-        //         }
-        //     }
+                }
+            }
           
-        // }
+        }
 
         
-        // stage('Scan Backend') {
-        //      agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
-        //         sh 'rm -rf backend '
-        //         unstash 'backend-code'
-        //         dir('backend') {
-        //             // sh 'npm install '
-        //             // sh 'npm audit fix --audit-level=critical --force'
-        //         }
-        //     }
+        stage('Scan Backend') {
+             agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
+                deleteDir()
+                unstash 'backend-code'
+                dir('backend') {
+                    // sh 'npm install '
+                    // sh 'npm audit fix --audit-level=critical --force'
+                }
+            }
           
-        // }
+        }
         
-        // stage('Scan Frontend') {
-        //      agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
-        //         sh 'rm -rf frontend '
-        //         unstash 'frontend-code'
-        //         dir('frontend') {
-        //             // sh 'npm install '
-        //             // sh 'npm audit fix --audit-level=critical --force'
-        //         }
-        //     }
+        stage('Scan Frontend') {
+             agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
+                deleteDir()
+                unstash 'frontend-code'
+                dir('frontend') {
+                    // sh 'npm install '
+                    // sh 'npm audit fix --audit-level=critical --force'
+                }
+            }
            
-        // }
+        }
         
         stage('Deploy Infrastructure') {
               agent {
@@ -299,12 +303,14 @@ pipeline {
             }
             post {
                 failure {
-                    
                     destroy_environment()
                 }
             }
         }
         
+
+
+
 
 
         // stage('Smoke Test') {
