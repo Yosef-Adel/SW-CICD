@@ -62,7 +62,7 @@ pipeline {
                 }
             }
             steps {
-                deleteDir()
+                
                 unstash 'frontend-code'
                 dir('frontend') {
                     sh 'ls'
@@ -83,7 +83,7 @@ pipeline {
                 }
             }
             steps {
-                deleteDir()
+                
                 unstash 'backend-code'
                 dir('backend') {
                     sh 'npm install '
@@ -104,7 +104,7 @@ pipeline {
                 }
             }
             steps {
-                deleteDir()
+                
                 unstash 'frontend-code'
                 dir('frontend') {
                     // sh 'npm install'
@@ -124,7 +124,7 @@ pipeline {
                 }
             }
             steps {
-                deleteDir()
+                
                 unstash 'backend-code'
                 dir('backend') {
                     // sh 'npm install'
@@ -145,7 +145,7 @@ pipeline {
                 }
             }
             steps {
-                deleteDir()
+                
                 unstash 'backend-code'
                 dir('backend') {
                     // sh 'npm install '
@@ -164,7 +164,7 @@ pipeline {
                 }
             }
             steps {
-                deleteDir()
+                
                 unstash 'frontend-code'
                 dir('frontend') {
                     // sh 'npm install '
