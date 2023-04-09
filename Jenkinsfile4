@@ -45,7 +45,7 @@ pipeline {
                     sh 'npm run build'
                 }
 
-                stash(name: 'frontend-build', includes: 'frontend/**')
+                stash(name: 'frontend-build', includes: 'frontend/build/**')
             }
         }
         
@@ -76,8 +76,9 @@ pipeline {
             }
             steps {
                 sh 'rm -rf frontend '
-                unstash 'frontend-build'
+                unstash 'frontend-code'
                 dir('frontend') {
+                    // sh 'npm install '
                     // sh 'npm test'
                    
                 }
@@ -250,8 +251,9 @@ pipeline {
             steps {
                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     unstash 'frontend-build'
-                    unstash 'invFile'
+                    sh 'ls'
                     dir('frontend') {
+                        sh 'ls'
                         sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
                         // sh 'npm install'
                         // sh 'npm run build'
