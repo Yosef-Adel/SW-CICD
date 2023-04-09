@@ -1,3 +1,15 @@
+def destroy_environment(){
+    sh 'echo "Destroying environment "'
+    sh 'aws cloudformation delete-stack --stack-name SW-project-backend-${BUILD_ID}'
+    sh ' aws s3 rm s3://sw-project-${BUILD_ID} } --recursive'
+    sh 'aws cloudformation delete-stack --stack-name SW-project-frontend-${BUILD_ID}'
+}
+
+
+
+
+
+
 pipeline {
     agent any
     environment {
@@ -177,6 +189,12 @@ pipeline {
                     stash name: 'invFile', includes: 'ansible/inventory.txt'
                 }
             }
+            post {
+                failure {
+                    
+                    destroy_environment()
+                }
+            }
 
            
         }
@@ -201,6 +219,12 @@ pipeline {
                         ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
                     '''
                }
+            }
+            post {
+                failure {
+                    
+                    destroy_environment()
+                }
             }
           
         }
@@ -234,6 +258,12 @@ pipeline {
                     sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
                 }
             }
+            post {
+                failure {
+                    
+                    destroy_environment()
+                }
+            }
           
         }
 
@@ -260,6 +290,12 @@ pipeline {
                         sh 'aws s3 cp build s3://sw-project-${BUILD_ID} --recursive'
                         
                     }
+                }
+            }
+            post {
+                failure {
+                    
+                    destroy_environment()
                 }
             }
         }
