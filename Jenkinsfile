@@ -24,27 +24,27 @@ pipeline {
     }
 
         
-    // stages {
-    //     stage('Source Frontend') {
-    //         steps {
-    //            dir('frontend') {
-    //                 checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
+    stages {
+        // stage('Source Frontend') {
+        //     steps {
+        //        dir('frontend') {
+        //             checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
                     
-    //             }
-    //             stash(name: 'frontend-code', includes: 'frontend/**')
-    //         }
-    //     }
+        //         }
+        //         stash(name: 'frontend-code', includes: 'frontend/**')
+        //     }
+        // }
         
-    //     stage('Source Backend') {
-    //         steps {
+        // stage('Source Backend') {
+        //     steps {
 
-    //             dir('backend') {
-    //                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
+        //         dir('backend') {
+        //             checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
                     
-    //             }
-    //             stash(name: 'backend-code', includes: 'backend/**')
-    //         }
-    //     }
+        //         }
+        //         stash(name: 'backend-code', includes: 'backend/**')
+        //     }
+        // }
         
 
         // stage('Build Frontend') {
