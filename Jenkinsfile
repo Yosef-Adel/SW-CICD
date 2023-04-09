@@ -58,8 +58,8 @@ pipeline {
                 unstash 'frontend-code'
                 dir('frontend') {
                     sh 'ls'
-                    sh 'npm install'
-                    sh 'npm run build'
+                    // sh 'npm install'
+                    // sh 'npm run build'
                 }
 
                 stash(name: 'frontend-build', includes: 'frontend/build/**')
