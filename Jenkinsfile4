@@ -258,7 +258,7 @@ pipeline {
                         // sh 'npm install'
                         // sh 'npm run build'
                         sh 'tar -czvf artifact-"${BUILD_ID}".tar.gz build'
-                        sh 'aws s3 cp dist s3://SW-project-${BUILD_ID} --recursive'
+                        sh 'aws s3 cp dist s3://sw-project-${BUILD_ID} --recursive'
                         
                     }
                 }
