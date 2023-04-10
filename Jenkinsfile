@@ -282,8 +282,6 @@ pipeline {
                 dir('ansible') {
                     sh ''' 
                         cat inventory.txt 
-                        cat $ANSIBLE_PRIVATE_KEY
-                        echo "Test Webhook"
                         ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
                     '''
                }
