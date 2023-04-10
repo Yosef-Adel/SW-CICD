@@ -439,25 +439,23 @@ pipeline {
             }
             steps {
                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                     script {
+                        sh 'export STACKS=($(aws cloudformation list-stacks \
+                                    --query "StackSummaries[*].StackName" \
+                                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text))'
 
-                    sh ''' 
-                        export STACKS=$(aws cloudformation list-stacks \
-                        --query "StackSummaries[*].StackName" \
-                        --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+                        sh 'echo Stack names: "${STACKS[@]}"'
+                        
+                        sh 'export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)'
+                        sh 'echo Old Workflow ID: $OldWorkflowID'
 
-                        echo Stack names: "${STACKS[@]}"
-
-                        export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)
-
-                        echo Old Workflow ID: $OldWorkflowID 
-
-                        if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-                        then
-                        aws s3 rm "s3://sw-project-${OldWorkflowID}" --recursive
-                        aws cloudformation delete-stack --stack-name "SW-project-backend-${OldWorkflowID}"
-                        aws cloudformation delete-stack --stack-name "SW-project-frontend-${OldWorkflowID}"
-                        fi
-                    '''
+                        sh '''if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]; then
+                                    aws s3 rm "s3://sw-project-${OldWorkflowID}" --recursive
+                                    aws cloudformation delete-stack --stack-name "SW-project-backend-${OldWorkflowID}"
+                                    aws cloudformation delete-stack --stack-name "SW-project-frontend-${OldWorkflowID}"
+                                fi'''
+                        }
+                    
                 }
             }
             
