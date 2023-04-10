@@ -404,7 +404,7 @@ pipeline {
 
                     sh ''' 
                     export OLD_WORKFLOW_ID=$(aws cloudformation \
-                    list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                    list-exports --query "Exports[?Name==`WorkflowID`].Value" \
                     --no-paginate --output text)
                     '''
                     sh 'echo "Old Wokflow ID: $OLD_WORKFLOW_ID"'
