@@ -3,7 +3,7 @@ def destroy_environment(){
 
     sh 'echo "Destroying environment "'
     sh 'aws cloudformation delete-stack --stack-name SW-project-backend-${BUILD_ID}'
-    sh ' aws s3 rm s3://sw-project-${BUILD_ID} } --recursive'
+    sh ' aws s3 rm s3://sw-project-${BUILD_ID}  --recursive'
     sh 'aws cloudformation delete-stack --stack-name SW-project-frontend-${BUILD_ID}'
 
 
@@ -19,7 +19,7 @@ def fail_alert(stage_name){
 }
 
 def pass_alert(stage_name){
-    slackSend color: 'good', iconEmoji: '🥱', message: '${stage_name} Completed '
+    slackSend color: 'good', iconEmoji: '🥱', message: stage_name +  'Completed '
     slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
 }
 
@@ -441,18 +441,22 @@ pipeline {
                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
 
                     sh ''' 
-                    export STACKS=($(aws cloudformation list-stacks \
-                    --query "StackSummaries[*].StackName" \
-                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-                    echo Stack names: "${STACKS[@]}"
-                    export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)
-                    echo Old Workflow ID: $OldWorkflowID 
-                    if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-                    then
-                    aws s3 rm "s3://sw-project-${OldWorkflowID}" --recursive
-                    aws cloudformation delete-stack --stack-name "SW-project-backend-${OldWorkflowID}"
-                    aws cloudformation delete-stack --stack-name "SW-project-frontend-${OldWorkflowID}"
-                fi
+                        export STACKS=$(aws cloudformation list-stacks \
+                        --query "StackSummaries[*].StackName" \
+                        --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+
+                        echo Stack names: "${STACKS[@]}"
+
+                        export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)
+
+                        echo Old Workflow ID: $OldWorkflowID 
+
+                        if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+                        then
+                        aws s3 rm "s3://sw-project-${OldWorkflowID}" --recursive
+                        aws cloudformation delete-stack --stack-name "SW-project-backend-${OldWorkflowID}"
+                        aws cloudformation delete-stack --stack-name "SW-project-frontend-${OldWorkflowID}"
+                        fi
                     '''
                 }
             }
