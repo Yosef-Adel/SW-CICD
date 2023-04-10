@@ -13,7 +13,7 @@ def destroy_environment(){
 
 def fail_alert(stage_name){
 
-    slackSend color: 'danger', iconEmoji: '⛔️', message: '${stage_name} failed '
+    slackSend color: 'danger', iconEmoji: '⛔️', message:  stage_name + 'failed '
     slackSend color: 'danger', iconEmoji: '👩‍🦯', message: 'تعبت يجدعان والله تعبت 💔'
 
 }
@@ -389,24 +389,77 @@ pipeline {
         // }
         
 
-        // stage('Cloudfront Update') {
-        //     steps {
-        //         // add commands to update cloudfront
-        //     }
-        //     dependencies {
-        //         stage('Smoke Test')
-        //     }
-        // }
+        stage('Cloudfront Update') {
+            agent {
+                docker {
+                    image 'yosefadel/aws-node'
+                }
+            }
+            environment {
+                KVDB_BUCKET= credentials('KVDB_BUCKET')
+                AWS_DEFAULT_REGION="us-east-1"
+            }
+            steps {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+
+                    sh ''' 
+                    export OLD_WORKFLOW_ID=$(aws cloudformation \
+                    list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                    --no-paginate --output text)
+                    '''
+                    sh 'echo "Old Wokflow ID: $OLD_WORKFLOW_ID"'
+                    sh 'curl -k https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"'
+
+                    sh ''' 
+                    aws cloudformation deploy \
+                    --template-file files/cloudfront.yml \
+                    --parameter-overrides WorkflowID="${BUILD_ID}" \
+                    --stack-name InitialStack
+                    '''
+
+                }
+            }
+            post {
+                failure {
+                    fail_alert("Deploy Frontend  ")
+                    destroy_environment()
+                }
+            }
+        }
         
 
-        // stage('Cleanup') {
-        //     steps {
-        //         // add commands to clean up
-        //     }
-        //     dependencies {
-        //         stage('Cloudfront Update')
-        //     }
-        // }
+        stage('Cleanup') {
+            agent {
+                docker {
+                    image 'yosefadel/aws-node'
+
+                }
+            }
+            environment {
+                KVDB_BUCKET= credentials('KVDB_BUCKET')
+                AWS_DEFAULT_REGION="us-east-1"
+            }
+            steps {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+
+                    sh ''' 
+                    export STACKS=($(aws cloudformation list-stacks \
+                    --query "StackSummaries[*].StackName" \
+                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+                    echo Stack names: "${STACKS[@]}"
+                    export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)
+                    echo Old Workflow ID: $OldWorkflowID 
+                    if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+                    then
+                    aws s3 rm "s3://sw-project-${OldWorkflowID}" --recursive
+                    aws cloudformation delete-stack --stack-name "SW-project-backend-${OldWorkflowID}"
+                    aws cloudformation delete-stack --stack-name "SW-project-frontend-${OldWorkflowID}"
+                fi
+                    '''
+                }
+            }
+            
+        }
 
 
     }
