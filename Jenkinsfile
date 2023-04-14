@@ -71,150 +71,172 @@ pipeline {
             }
         }
 
-        stage('Build Frontend') {
-            agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Build Frontend') {
+        //     agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'ls'
-                    sh 'npm install'
-                    sh 'npm run build'
-                }
+        //         unstash 'frontend-code'
+        //         dir('frontend') {
+        //             sh 'ls'
+        //             sh 'npm install'
+        //             sh 'npm run build'
+        //         }
 
-                stash(name: 'frontend-build', includes: 'frontend/build/**')
-                pass_alert("Build Frontend")
+        //         stash(name: 'frontend-build', includes: 'frontend/build/**')
+        //         pass_alert("Build Frontend")
             
-            }
-            post {
-                failure {
-                    fail_alert("Build Frontend")
-                }
-            }
-        }
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Build Frontend")
+        //         }
+        //     }
+        // }
         
-        stage('Build Backend') {
-            agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Build Backend') {
+        //     agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'npm install '
-                    // sh 'npm build'
-                }
-                // stash(name: 'backend-build', includes: 'backend/build**')
-                pass_alert("Build Backend")
-            }
-            post {
-                failure {
-                    fail_alert("Build Backend")
-                }
-            }
-        }
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             sh 'npm install '
+        //             // sh 'npm build'
+        //         }
+        //         // stash(name: 'backend-build', includes: 'backend/build**')
+        //         pass_alert("Build Backend")
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Build Backend")
+        //         }
+        //     }
+        // }
 
 
-        stage('Test Frontend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Test Frontend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'frontend-code'
-                dir('frontend') {
-                    // sh 'npm install'
-                    // sh 'npm test'
+        //         unstash 'frontend-code'
+        //         dir('frontend') {
+        //             // sh 'npm install'
+        //             // sh 'npm test'
                    
-                }
-                pass_alert("Test Frontend ")
+        //         }
+        //         pass_alert("Test Frontend ")
                 
-            }
-            post {
-                failure {
-                    fail_alert("Test Frontend")
-                }
-            }
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Test Frontend")
+        //         }
+        //     }
             
-        }
+        // }
         
-        stage('Test Backend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Test Backend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'backend-code'
-                dir('backend') {
-                    // sh 'npm install'
-                    // sh 'npm test '
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             // sh 'npm install'
+        //             // sh 'npm test '
                    
-                }
-                pass_alert("Test Backend ")
-            }
-            post {
-                failure {
-                    fail_alert("Test Backend")
-                }
-            }
+        //         }
+        //         pass_alert("Test Backend ")
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Test Backend")
+        //         }
+        //     }
           
-        }
+        // }
 
         
-        stage('Scan Backend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Scan Backend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'backend-code'
-                dir('backend') {
-                    // sh 'npm install '
-                    // sh 'npm audit fix --audit-level=critical --force'
-                }
-                pass_alert("Scan Backend ")
-            }
-            post {
-                failure {
-                    fail_alert("Scan Backend")
-                }
-            }
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             // sh 'npm install '
+        //             // sh 'npm audit fix --audit-level=critical --force'
+        //         }
+        //         pass_alert("Scan Backend ")
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Scan Backend")
+        //         }
+        //     }
           
-        }
+        // }
         
-        stage('Scan Frontend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Scan Frontend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'frontend-code'
-                dir('frontend') {
-                    // sh 'npm install '
-                    // sh 'npm audit fix --audit-level=critical --force'
-                }
-                pass_alert("Scan Frontend ")
-            }
-            post {
-                failure {
-                    fail_alert("Scan Frontend")
-                }
-            }
+        //         unstash 'frontend-code'
+        //         dir('frontend') {
+        //             // sh 'npm install '
+        //             // sh 'npm audit fix --audit-level=critical --force'
+        //         }
+        //         pass_alert("Scan Frontend ")
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Scan Frontend")
+        //         }
+        //     }
            
+        // }
+
+        stage('Dockerize Backend') {
+            environment {
+                DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+            }
+            steps {
+                unstash 'backend-code'
+                dir('backend') {
+                    sh 'docker build -t yosefadel/sw-project-backend:${BUILD_ID} .'
+                    sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
+                    sh 'docker push yosefadel/sw-project-backend:${BUILD_ID}'
+                }
+                pass_alert("Dockerize Backend ")
+            }
+            post {
+                failure {
+                    fail_alert("Dockerize Backend ")
+                    destroy_environment()
+                }
+            }
+          
         }
         
         stage('Deploy Infrastructure') {
@@ -296,7 +318,9 @@ pipeline {
           
         }
         
-        
+      
+
+
         stage('Deploy Backend') {
              agent {
                 docker {
@@ -313,6 +337,7 @@ pipeline {
                 dir('backend') {
                   
                     sh 'rm -rf node_modules .git'
+
                     sh 'cat $ENVVAER >> .env'
                 }
 
@@ -326,11 +351,11 @@ pipeline {
                 }
 
 
-                pass_alert("Deploy Backend  ")
+                pass_alert("Deploy Backend ")
             }
             post {
                 failure {
-                    fail_alert("Deploy Backend  ")
+                    fail_alert("Deploy Backend ")
                     destroy_environment()
                 }
             }
