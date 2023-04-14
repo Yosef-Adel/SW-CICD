@@ -225,7 +225,7 @@ pipeline {
                 unstash 'backend-code'
                 dir('backend') {
                     sh 'docker build -t yosefadel/sw-project-backend:${BUILD_ID} .'
-                    sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
                     sh 'docker push yosefadel/sw-project-backend:${BUILD_ID}'
                 }
                 pass_alert("Dockerize Backend ")
