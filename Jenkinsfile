@@ -41,7 +41,7 @@ pipeline {
         stage('Source Frontend') {
             steps {
                dir('frontend') {
-                    checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
+                    checkout scmGit(branches: [[name: '*/Deplyment']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
                     
                 }
                 stash(name: 'frontend-code', includes: 'frontend/**')
