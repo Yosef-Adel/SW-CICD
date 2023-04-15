@@ -224,9 +224,9 @@ pipeline {
             steps {
                 unstash 'backend-code'
                 dir('backend') {
-                    sh 'docker build -t yosefadel/sw-project-backend:${BUILD_ID} .'
+                    sh 'docker build -t yosefadel/sw-project-backend:${BUILD_ID}.0.0 .'
                     sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
-                    sh 'docker push yosefadel/sw-project-backend:${BUILD_ID}'
+                    sh 'docker push yosefadel/sw-project-backend:${BUILD_ID}.0.0'
                 }
                 pass_alert("Dockerize Backend ")
             }
@@ -334,14 +334,11 @@ pipeline {
             }
             steps {
                 unstash 'invFile'
-                dir('backend') {
-                  
-                    sh 'rm -rf node_modules .git'
-
+                dir('server') {
                     sh 'cat $ENVVAER >> .env'
                 }
 
-                sh 'tar -czf artifact.tar.gz backend'
+                sh 'tar -czf artifact.tar.gz server'
                 sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
                 
                 dir('ansible') {

@@ -9,18 +9,16 @@
     src: artifact.tar.gz
     dest: /home/ubuntu
 
-
 - name: "Installing Node Dependencies"
   shell: |
-    cd /home/ubuntu/backend
+    cd /home/ubuntu/server
     npm i
 
 - name: "Start application"
   shell: |
     ls
-    cd backend 
-    pm2 stop default
-    pm2 start -f server.js
+    cd server 
+    docker run -p 3000:3000 -d -v $(pwd)/.env:/app/.env yosefadel/sw-project-backend:latest
 
 - name: Install NGINX
   become: True
