@@ -224,7 +224,7 @@ pipeline {
             steps {
                 unstash 'backend-code'
                 dir('backend') {
-                    sh 'docker build -t yosefadel/sw-project-backend:${BUILD_ID}.0.0 .'
+                    sh 'docker build -t yosefadel/sw-project-backend .'
                     sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
                     sh 'docker push yosefadel/sw-project-backend:${BUILD_ID}.0.0'
                 }
