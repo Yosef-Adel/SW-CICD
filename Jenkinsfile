@@ -361,37 +361,37 @@ pipeline {
 
 
         
-        stage('Deploy Frontend') {
-             agent {
-                docker {
-                    image 'yosefadel/aws-node'
-                }
-            }
-            environment {
-                AWS_DEFAULT_REGION="us-east-1"
+        // stage('Deploy Frontend') {
+        //      agent {
+        //         docker {
+        //             image 'yosefadel/aws-node'
+        //         }
+        //     }
+        //     environment {
+        //         AWS_DEFAULT_REGION="us-east-1"
                 
-            }
-            steps {
-                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    unstash 'frontend-build'
-                    sh 'ls'
-                    dir('frontend') {
-                        sh 'ls'
-                        sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
-                        sh 'tar -czvf artifact-"${BUILD_ID}".tar.gz build'
-                        sh 'aws s3 cp build s3://sw-project-${BUILD_ID} --recursive'
+        //     }
+        //     steps {
+        //         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+        //             unstash 'frontend-build'
+        //             sh 'ls'
+        //             dir('frontend') {
+        //                 sh 'ls'
+        //                 sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
+        //                 sh 'tar -czvf artifact-"${BUILD_ID}".tar.gz build'
+        //                 sh 'aws s3 cp build s3://sw-project-${BUILD_ID} --recursive'
                         
-                    }
-                }
-            pass_alert("Deploy Frontend  ")     
-            }
-            post {
-                failure {
-                    fail_alert("Deploy Frontend  ")
-                    destroy_environment()
-                }
-            }
-        }
+        //             }
+        //         }
+        //     pass_alert("Deploy Frontend  ")     
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Deploy Frontend  ")
+        //             destroy_environment()
+        //         }
+        //     }
+        // }
         
 
 
@@ -409,79 +409,79 @@ pipeline {
         // }
         
 
-        stage('Cloudfront Update') {
-            agent {
-                docker {
-                    image 'yosefadel/aws-node'
-                }
-            }
-            environment {
-                KVDB_BUCKET= credentials('KVDB_BUCKET')
-                AWS_DEFAULT_REGION="us-east-1"
-            }
-            steps {
-                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+        // stage('Cloudfront Update') {
+        //     agent {
+        //         docker {
+        //             image 'yosefadel/aws-node'
+        //         }
+        //     }
+        //     environment {
+        //         KVDB_BUCKET= credentials('KVDB_BUCKET')
+        //         AWS_DEFAULT_REGION="us-east-1"
+        //     }
+        //     steps {
+        //         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
 
-                    sh ''' 
-                    export OLD_WORKFLOW_ID=$(aws cloudformation \
-                    list-exports --query "Exports[?Name==`WorkflowID`].Value" \
-                    --no-paginate --output text)
-                    '''
-                    sh 'echo "Old Wokflow ID: $OLD_WORKFLOW_ID"'
-                    sh 'curl -k https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"'
+        //             sh ''' 
+        //             export OLD_WORKFLOW_ID=$(aws cloudformation \
+        //             list-exports --query "Exports[?Name==`WorkflowID`].Value" \
+        //             --no-paginate --output text)
+        //             '''
+        //             sh 'echo "Old Wokflow ID: $OLD_WORKFLOW_ID"'
+        //             sh 'curl -k https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"'
 
-                    sh ''' 
-                    aws cloudformation deploy \
-                    --template-file files/cloudfront.yml \
-                    --parameter-overrides WorkflowID="${BUILD_ID}" \
-                    --stack-name InitialStack
-                    '''
+        //             sh ''' 
+        //             aws cloudformation deploy \
+        //             --template-file files/cloudfront.yml \
+        //             --parameter-overrides WorkflowID="${BUILD_ID}" \
+        //             --stack-name InitialStack
+        //             '''
 
-                }
-            }
-            post {
-                failure {
-                    fail_alert("Deploy Frontend  ")
-                    destroy_environment()
-                }
-            }
-        }
+        //         }
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Deploy Frontend  ")
+        //             destroy_environment()
+        //         }
+        //     }
+        // }
         
 
-        stage('Cleanup') {
-            agent {
-                docker {
-                    image 'yosefadel/aws-node'
+        // stage('Cleanup') {
+        //     agent {
+        //         docker {
+        //             image 'yosefadel/aws-node'
 
-                }
-            }
-            environment {
-                KVDB_BUCKET= credentials('KVDB_BUCKET')
-                AWS_DEFAULT_REGION="us-east-1"
-            }
-            steps {
-                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                     script {
-                        sh 'export STACKS=($(aws cloudformation list-stacks \
-                                    --query "StackSummaries[*].StackName" \
-                                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text))'
+        //         }
+        //     }
+        //     environment {
+        //         KVDB_BUCKET= credentials('KVDB_BUCKET')
+        //         AWS_DEFAULT_REGION="us-east-1"
+        //     }
+        //     steps {
+        //         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+        //              script {
+        //                 sh 'export STACKS=($(aws cloudformation list-stacks \
+        //                             --query "StackSummaries[*].StackName" \
+        //                             --stack-status-filter CREATE_COMPLETE --no-paginate --output text))'
 
-                        sh 'echo Stack names: "${STACKS[@]}"'
+        //                 sh 'echo Stack names: "${STACKS[@]}"'
                         
-                        sh 'export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)'
-                        sh 'echo Old Workflow ID: $OldWorkflowID'
+        //                 sh 'export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)'
+        //                 sh 'echo Old Workflow ID: $OldWorkflowID'
 
-                        sh '''if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]; then
-                                    aws s3 rm "s3://sw-project-${OldWorkflowID}" --recursive
-                                    aws cloudformation delete-stack --stack-name "SW-project-backend-${OldWorkflowID}"
-                                    aws cloudformation delete-stack --stack-name "SW-project-frontend-${OldWorkflowID}"
-                                fi'''
-                        }
+        //                 sh '''if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]; then
+        //                             aws s3 rm "s3://sw-project-${OldWorkflowID}" --recursive
+        //                             aws cloudformation delete-stack --stack-name "SW-project-backend-${OldWorkflowID}"
+        //                             aws cloudformation delete-stack --stack-name "SW-project-frontend-${OldWorkflowID}"
+        //                         fi'''
+        //                 }
                     
-                }
-            }
+        //         }
+        //     }
             
-        }
+        // }
 
 
     }
