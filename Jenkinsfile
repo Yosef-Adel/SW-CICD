@@ -422,20 +422,20 @@ pipeline {
             steps {
                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     
-                    def oldWorkflowID = sh(
-                    script: "aws cloudformation list-exports \
-                        --query \"Exports[?Name==\`WorkflowID\`].Value\" \
-                        --no-paginate --output text",
-                        returnStdout: true
-                        ).trim()
-                    sh "curl -k https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d \"${oldWorkflowID}\""
-                    echo "Old Workflow ID: ${oldWorkflowID}"
-                    
                     sh ''' 
-                    aws cloudformation deploy \
-                    --template-file files/cloudfront.yml \
-                    --parameter-overrides WorkflowID="${BUILD_ID}" \
-                    --stack-name InitialStack
+                        export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name==\\`WorkflowID\\`].Value" \
+                            --no-paginate --output text)
+                         
+                         echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+                         curl -k https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"
+
+                        '''
+
+                    sh ''' 
+                        aws cloudformation deploy \
+                        --template-file files/cloudfront.yml \
+                        --parameter-overrides WorkflowID="${BUILD_ID}" \
+                        --stack-name InitialStack
                     '''
 
                 }
@@ -447,6 +447,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Cleanup') {
             agent {
