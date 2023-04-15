@@ -9,7 +9,9 @@
     src: artifact.tar.gz
     dest: /home/ubuntu
 
-
+- name: "Pull Image"
+  shell: |
+    docker pull yosefadel/sw-project-backend
 
 - name: "Start application"
   shell: |

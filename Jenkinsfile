@@ -71,151 +71,151 @@ pipeline {
             }
         }
 
-        // stage('Build Frontend') {
-        //     agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
+        stage('Build Frontend') {
+            agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
                 
-        //         unstash 'frontend-code'
-        //         dir('frontend') {
-        //             sh 'ls'
-        //             sh 'npm install'
-        //             sh 'npm run build'
-        //         }
+                unstash 'frontend-code'
+                dir('frontend') {
+                    sh 'ls'
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
 
-        //         stash(name: 'frontend-build', includes: 'frontend/build/**')
-        //         pass_alert("Build Frontend")
+                stash(name: 'frontend-build', includes: 'frontend/build/**')
+                pass_alert("Build Frontend")
             
-        //     }
-        //     post {
-        //         failure {
-        //             fail_alert("Build Frontend")
-        //         }
-        //     }
-        // }
+            }
+            post {
+                failure {
+                    fail_alert("Build Frontend")
+                }
+            }
+        }
         
-        // stage('Build Backend') {
-        //     agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
+        stage('Build Backend') {
+            agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
                 
-        //         unstash 'backend-code'
-        //         dir('backend') {
-        //             sh 'npm install '
-        //             // sh 'npm build'
-        //         }
-        //         // stash(name: 'backend-build', includes: 'backend/build**')
-        //         pass_alert("Build Backend")
-        //     }
-        //     post {
-        //         failure {
-        //             fail_alert("Build Backend")
-        //         }
-        //     }
-        // }
+                unstash 'backend-code'
+                dir('backend') {
+                    sh 'npm install '
+                    // sh 'npm build'
+                }
+                // stash(name: 'backend-build', includes: 'backend/build**')
+                pass_alert("Build Backend")
+            }
+            post {
+                failure {
+                    fail_alert("Build Backend")
+                }
+            }
+        }
 
 
-        // stage('Test Frontend') {
-        //      agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
+        stage('Test Frontend') {
+             agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
                 
-        //         unstash 'frontend-code'
-        //         dir('frontend') {
-        //             // sh 'npm install'
-        //             // sh 'npm test'
+                unstash 'frontend-code'
+                dir('frontend') {
+                    // sh 'npm install'
+                    // sh 'npm test'
                    
-        //         }
-        //         pass_alert("Test Frontend ")
+                }
+                pass_alert("Test Frontend ")
                 
-        //     }
-        //     post {
-        //         failure {
-        //             fail_alert("Test Frontend")
-        //         }
-        //     }
+            }
+            post {
+                failure {
+                    fail_alert("Test Frontend")
+                }
+            }
             
-        // }
+        }
         
-        // stage('Test Backend') {
-        //      agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
+        stage('Test Backend') {
+             agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
                 
-        //         unstash 'backend-code'
-        //         dir('backend') {
-        //             // sh 'npm install'
-        //             // sh 'npm test '
+                unstash 'backend-code'
+                dir('backend') {
+                    // sh 'npm install'
+                    // sh 'npm test '
                    
-        //         }
-        //         pass_alert("Test Backend ")
-        //     }
-        //     post {
-        //         failure {
-        //             fail_alert("Test Backend")
-        //         }
-        //     }
+                }
+                pass_alert("Test Backend ")
+            }
+            post {
+                failure {
+                    fail_alert("Test Backend")
+                }
+            }
           
-        // }
+        }
 
         
-        // stage('Scan Backend') {
-        //      agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
+        stage('Scan Backend') {
+             agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
                 
-        //         unstash 'backend-code'
-        //         dir('backend') {
-        //             // sh 'npm install '
-        //             // sh 'npm audit fix --audit-level=critical --force'
-        //         }
-        //         pass_alert("Scan Backend ")
-        //     }
-        //     post {
-        //         failure {
-        //             fail_alert("Scan Backend")
-        //         }
-        //     }
+                unstash 'backend-code'
+                dir('backend') {
+                    // sh 'npm install '
+                    // sh 'npm audit fix --audit-level=critical --force'
+                }
+                pass_alert("Scan Backend ")
+            }
+            post {
+                failure {
+                    fail_alert("Scan Backend")
+                }
+            }
           
-        // }
+        }
         
-        // stage('Scan Frontend') {
-        //      agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
+        stage('Scan Frontend') {
+             agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
                 
-        //         unstash 'frontend-code'
-        //         dir('frontend') {
-        //             // sh 'npm install '
-        //             // sh 'npm audit fix --audit-level=critical --force'
-        //         }
-        //         pass_alert("Scan Frontend ")
-        //     }
-        //     post {
-        //         failure {
-        //             fail_alert("Scan Frontend")
-        //         }
-        //     }
+                unstash 'frontend-code'
+                dir('frontend') {
+                    // sh 'npm install '
+                    // sh 'npm audit fix --audit-level=critical --force'
+                }
+                pass_alert("Scan Frontend ")
+            }
+            post {
+                failure {
+                    fail_alert("Scan Frontend")
+                }
+            }
            
-        // }
+        }
 
         stage('Dockerize Backend') {
             environment {
@@ -361,37 +361,37 @@ pipeline {
 
 
         
-        // stage('Deploy Frontend') {
-        //      agent {
-        //         docker {
-        //             image 'yosefadel/aws-node'
-        //         }
-        //     }
-        //     environment {
-        //         AWS_DEFAULT_REGION="us-east-1"
+        stage('Deploy Frontend') {
+             agent {
+                docker {
+                    image 'yosefadel/aws-node'
+                }
+            }
+            environment {
+                AWS_DEFAULT_REGION="us-east-1"
                 
-        //     }
-        //     steps {
-        //         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-        //             unstash 'frontend-build'
-        //             sh 'ls'
-        //             dir('frontend') {
-        //                 sh 'ls'
-        //                 sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
-        //                 sh 'tar -czvf artifact-"${BUILD_ID}".tar.gz build'
-        //                 sh 'aws s3 cp build s3://sw-project-${BUILD_ID} --recursive'
+            }
+            steps {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    unstash 'frontend-build'
+                    sh 'ls'
+                    dir('frontend') {
+                        sh 'ls'
+                        sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
+                        sh 'tar -czvf artifact-"${BUILD_ID}".tar.gz build'
+                        sh 'aws s3 cp build s3://sw-project-${BUILD_ID} --recursive'
                         
-        //             }
-        //         }
-        //     pass_alert("Deploy Frontend  ")     
-        //     }
-        //     post {
-        //         failure {
-        //             fail_alert("Deploy Frontend  ")
-        //             destroy_environment()
-        //         }
-        //     }
-        // }
+                    }
+                }
+            pass_alert("Deploy Frontend  ")     
+            }
+            post {
+                failure {
+                    fail_alert("Deploy Frontend  ")
+                    destroy_environment()
+                }
+            }
+        }
         
 
 
@@ -409,43 +409,43 @@ pipeline {
         // }
         
 
-        // stage('Cloudfront Update') {
-        //     agent {
-        //         docker {
-        //             image 'yosefadel/aws-node'
-        //         }
-        //     }
-        //     environment {
-        //         KVDB_BUCKET= credentials('KVDB_BUCKET')
-        //         AWS_DEFAULT_REGION="us-east-1"
-        //     }
-        //     steps {
-        //         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+        stage('Cloudfront Update') {
+            agent {
+                docker {
+                    image 'yosefadel/aws-node'
+                }
+            }
+            environment {
+                KVDB_BUCKET= credentials('KVDB_BUCKET')
+                AWS_DEFAULT_REGION="us-east-1"
+            }
+            steps {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
 
-        //             sh ''' 
-        //             export OLD_WORKFLOW_ID=$(aws cloudformation \
-        //             list-exports --query "Exports[?Name==`WorkflowID`].Value" \
-        //             --no-paginate --output text)
-        //             '''
-        //             sh 'echo "Old Wokflow ID: $OLD_WORKFLOW_ID"'
-        //             sh 'curl -k https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"'
+                    sh ''' 
+                    export OLD_WORKFLOW_ID=$(aws cloudformation \
+                    list-exports --query "Exports[?Name==`WorkflowID`].Value" \
+                    --no-paginate --output text)
+                    '''
+                    sh 'echo "Old Wokflow ID: $OLD_WORKFLOW_ID"'
+                    sh 'curl -k https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"'
 
-        //             sh ''' 
-        //             aws cloudformation deploy \
-        //             --template-file files/cloudfront.yml \
-        //             --parameter-overrides WorkflowID="${BUILD_ID}" \
-        //             --stack-name InitialStack
-        //             '''
+                    sh ''' 
+                    aws cloudformation deploy \
+                    --template-file files/cloudfront.yml \
+                    --parameter-overrides WorkflowID="${BUILD_ID}" \
+                    --stack-name InitialStack
+                    '''
 
-        //         }
-        //     }
-        //     post {
-        //         failure {
-        //             fail_alert("Deploy Frontend  ")
-        //             destroy_environment()
-        //         }
-        //     }
-        // }
+                }
+            }
+            post {
+                failure {
+                    fail_alert("Deploy Frontend  ")
+                    destroy_environment()
+                }
+            }
+        }
         
 
         // stage('Cleanup') {
