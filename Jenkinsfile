@@ -474,11 +474,15 @@ pipeline {
                         ).trim()
                         echo "Old Workflow ID: ${oldWorkflowID}"
 
-                        if (stacks.contains(oldWorkflowID)) {
-                            sh "aws s3 rm \"s3://sw-project-${oldWorkflowID}\" --recursive"
-                            sh "aws cloudformation delete-stack --stack-name \"SW-project-backend-${oldWorkflowID}\""
-                            sh "aws cloudformation delete-stack --stack-name \"SW-project-frontend-${oldWorkflowID}\""
+                        if (stacks.contains("SW-project-backend-"+ oldWorkflowID)) {
+                            echo "Old Workflow ID: ${oldWorkflowID}"
+                            sh "echo 'Old Workflow ID: ${oldWorkflowID}'"
+                            
+                            sh "aws s3 rm 's3://sw-project-${oldWorkflowID}' --recursive"
+                            sh "aws cloudformation delete-stack --stack-name 'SW-project-backend-${oldWorkflowID}'"
+                            sh "aws cloudformation delete-stack --stack-name 'SW-project-frontend-${oldWorkflowID}'"
                         }
+
                     }
                 }
             }
