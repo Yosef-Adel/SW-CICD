@@ -1,3 +1,4 @@
+
 - copy:
     src: roles/deploy/artifact.tar.gz
     dest: /home/ubuntu
@@ -8,48 +9,29 @@
     src: artifact.tar.gz
     dest: /home/ubuntu
 
+- name: "Pull Image"
+  shell: |
+    docker pull yosefadel/sw-project-backend
 
-- name: Pull Docker Image
-  docker_image:
-    name: yosefadel/sw-project-backend
-    state: present
+- name: "Start application"
+  shell: |
+    ls
+    cd server 
+    docker run -p 3000:3000 -d -v $(pwd)/.env:/app/.env yosefadel/sw-project-backend
 
+- name: Install NGINX
+  become: True
+  shell: |
+    apt -y install nginx
+    rm -rf /etc/nginx/sites-available/default
 
-- name: Start Docker Container
-  docker_container:
-    name: backend_app
-    image: yosefadel/sw-project-backend
-    ports:
-      - "3000:3000"
-    volumes:
-      - "{{ ansible_env.PWD }}/.env:/app/.env"
-    state: started
-
-
-- name: Install Nginx
-  apt:
-    name: nginx
-    state: latest
-
-- name: Copy Nginx config file
-  copy:
+- copy:
     src: roles/deploy/tasks/default
     dest: /etc/nginx/sites-available/default
-    mode: "0644"
 
-- name: Enable Nginx config
-  file:
-    src: /etc/nginx/sites-available/default
-    dest: /etc/nginx/sites-enabled/default
-    state: link
 
-- name: Test Nginx config
-  command: nginx -t
-  register: nginx_test
-  ignore_errors: yes
-
-- name: Reload Nginx
-  service:
-    name: nginx
-    state: reloaded
-  when: nginx_test.rc == 0
+- name: check NGINX
+  become: True
+  shell: |
+    nginx -t
+    service nginx restart
