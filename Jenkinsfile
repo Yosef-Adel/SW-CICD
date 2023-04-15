@@ -446,42 +446,42 @@ pipeline {
                 }
             }
         }
-        
 
-        // stage('Cleanup') {
-        //     agent {
-        //         docker {
-        //             image 'yosefadel/aws-node'
-
-        //         }
-        //     }
-        //     environment {
-        //         KVDB_BUCKET= credentials('KVDB_BUCKET')
-        //         AWS_DEFAULT_REGION="us-east-1"
-        //     }
-        //     steps {
-        //         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-        //              script {
-        //                 sh 'export STACKS=($(aws cloudformation list-stacks \
-        //                             --query "StackSummaries[*].StackName" \
-        //                             --stack-status-filter CREATE_COMPLETE --no-paginate --output text))'
-
-        //                 sh 'echo Stack names: "${STACKS[@]}"'
+        stage('Cleanup') {
+            agent {
+                docker {
+                    image 'yosefadel/aws-node'
+                }
+            }
+            environment {
+                KVDB_BUCKET= credentials('KVDB_BUCKET')
+                AWS_DEFAULT_REGION="us-east-1"
+            }
+            steps {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    script {
+                        def stacks = sh(
+                            script: 'aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text',
+                            returnStdout: true
+                        ).trim().split()
+                        echo "Stack names: ${stacks}"
                         
-        //                 sh 'export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)'
-        //                 sh 'echo Old Workflow ID: $OldWorkflowID'
+                        def oldWorkflowID = sh(
+                            script: 'curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id',
+                            returnStdout: true
+                        ).trim()
+                        echo "Old Workflow ID: ${oldWorkflowID}"
 
-        //                 sh '''if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]; then
-        //                             aws s3 rm "s3://sw-project-${OldWorkflowID}" --recursive
-        //                             aws cloudformation delete-stack --stack-name "SW-project-backend-${OldWorkflowID}"
-        //                             aws cloudformation delete-stack --stack-name "SW-project-frontend-${OldWorkflowID}"
-        //                         fi'''
-        //                 }
-                    
-        //         }
-        //     }
-            
-        // }
+                        if (stacks.contains(oldWorkflowID)) {
+                            sh "aws s3 rm \"s3://sw-project-${oldWorkflowID}\" --recursive"
+                            sh "aws cloudformation delete-stack --stack-name \"SW-project-backend-${oldWorkflowID}\""
+                            sh "aws cloudformation delete-stack --stack-name \"SW-project-frontend-${oldWorkflowID}\""
+                        }
+                    }
+                }
+            }
+        }
+   
 
 
     }
