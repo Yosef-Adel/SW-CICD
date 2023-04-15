@@ -32,10 +32,10 @@
     state: latest
 
 - name: Copy Nginx config file
-    copy:
-      src: roles/deploy/tasks/default
-      dest: /etc/nginx/sites-available/default
-      mode: "0644"
+  copy:
+    src: roles/deploy/tasks/default
+    dest: /etc/nginx/sites-available/default
+    mode: "0644"
 
 - name: Enable Nginx config
   file:
