@@ -77,11 +77,11 @@ pipeline {
                 
                 unstash 'frontend-code'
                 dir('frontend') {
-                    sh 'echo "Install dependencies" >> build.log'
-                    sh 'npm install >> build.log'
-                    sh 'echo "Build started" >> build.log'
-                    sh 'npm run build >> build.log'
-                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
+                    // sh 'echo "Install dependencies" >> build.log'
+                    // sh 'npm install >> build.log'
+                    // sh 'echo "Build started" >> build.log'
+                    // sh 'npm run build >> build.log'
+                    // slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
                 }
                  
                 stash(name: 'frontend-build', includes: 'frontend/build/**')
@@ -172,7 +172,7 @@ pipeline {
             }
             post {
                 failure {
-                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs'
+                    slackUploadFile filePath: './backend/test.log', initialComment: 'Here is the backend test logs'
                     fail_alert("Test Backend")
                 }
             }
