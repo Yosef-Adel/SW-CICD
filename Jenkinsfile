@@ -131,8 +131,8 @@ pipeline {
                 
                 unstash 'frontend-code'
                 dir('frontend') {
-                    // sh 'npm install'
-                    // sh 'npm test'
+                    sh 'npm install'
+                    sh 'npm test'
                    
                 }
                 pass_alert("Test Frontend ")
