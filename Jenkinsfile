@@ -81,7 +81,7 @@ pipeline {
                     sh 'npm install >> build.log'
                     sh 'echo "Build started" >> build.log'
                     sh 'npm run build >> build.log'
-                    // slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
+                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
                 }
                  
                 stash(name: 'frontend-build', includes: 'frontend/build/**')
@@ -109,7 +109,7 @@ pipeline {
                     sh 'npm install >> build.log'
                     sh 'echo "Build started" >> build.log'
                     // sh 'npm build'
-                    // slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
+                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
                 }
                 // stash(name: 'backend-build', includes: 'backend/build**')
                 pass_alert("Build Backend")
@@ -136,7 +136,7 @@ pipeline {
                     // sh 'npm install >> test.log'
                     sh 'echo "Test started" >> test.log'
                     // sh 'npm test >> test.log' 
-                    // slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
+                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
                    
                 }
                 pass_alert("Test Frontend ")
@@ -164,7 +164,7 @@ pipeline {
                     // sh 'npm install >> test.log'
                     sh 'echo "Test started" >> test.log'
                     // sh 'npm test >> test.log '
-                    // slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs'
+                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs'
                    
                 }
                 pass_alert("Test Backend ")
@@ -192,7 +192,7 @@ pipeline {
                     // sh 'npm install >> scan.log'
                     sh 'echo "Scan started" >> scan.log'
                     // sh 'npm audit fix --audit-level=critical --force >> scan.log'
-                    // slackUploadFile filePath: 'scan.log', initialComment: 'Here is the backend scan logs'
+                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the backend scan logs'
                 }
                 pass_alert("Scan Backend ")
             }
@@ -218,7 +218,7 @@ pipeline {
                     // sh 'npm install  >> scan.log'
                     sh 'echo "Scan started" >> scan.log'
                     // sh 'npm audit fix --audit-level=critical --force >> scan.log'
-                    // slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
+                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
                 }
                 pass_alert("Scan Frontend ")
             }
