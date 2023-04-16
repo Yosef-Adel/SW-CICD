@@ -67,33 +67,33 @@ pipeline {
             }
         }
 
-        stage('Build Frontend') {
-            agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Build Frontend') {
+        //     agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'echo "Install dependencies" >> build.log'
-                    sh 'npm install >> build.log'
-                    sh 'echo "Build started" >> build.log'
-                    sh 'npm run build >> build.log'
-                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
-                }
+        //         unstash 'frontend-code'
+        //         dir('frontend') {
+        //             sh 'echo "Install dependencies" >> build.log'
+        //             sh 'npm install >> build.log'
+        //             sh 'echo "Build started" >> build.log'
+        //             sh 'npm run build >> build.log'
+        //             slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
+        //         }
                  
-                stash(name: 'frontend-build', includes: 'frontend/build/**')
-                pass_alert("Build Frontend")
+        //         stash(name: 'frontend-build', includes: 'frontend/build/**')
+        //         pass_alert("Build Frontend")
             
-            }
-            post {
-                failure {
-                    fail_alert("Build Frontend")
-                }
-            }
-        }
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Build Frontend")
+        //         }
+        //     }
+        // }
         
         stage('Build Backend') {
             agent {
@@ -122,33 +122,33 @@ pipeline {
         }
 
 
-        stage('Test Frontend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Test Frontend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'echo "Install dependencies" >> test.log'
-                    // sh 'npm install >> test.log'
-                    sh 'echo "Test started" >> test.log'
-                    // sh 'npm test >> test.log' 
-                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
+        //         unstash 'frontend-code'
+        //         dir('frontend') {
+        //             sh 'echo "Install dependencies" >> test.log'
+        //             // sh 'npm install >> test.log'
+        //             sh 'echo "Test started" >> test.log'
+        //             // sh 'npm test >> test.log' 
+        //             slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
                    
-                }
-                pass_alert("Test Frontend ")
+        //         }
+        //         pass_alert("Test Frontend ")
                 
-            }
-            post {
-                failure {
-                    fail_alert("Test Frontend")
-                }
-            }
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Test Frontend")
+        //         }
+        //     }
             
-        }
+        // }
         
         stage('Test Backend') {
              agent {
@@ -204,31 +204,31 @@ pipeline {
           
         }
         
-        stage('Scan Frontend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Scan Frontend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'echo "Install dependencies" >> scan.log'
-                    // sh 'npm install  >> scan.log'
-                    sh 'echo "Scan started" >> scan.log'
-                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
-                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
-                }
-                pass_alert("Scan Frontend ")
-            }
-            post {
-                failure {
-                    fail_alert("Scan Frontend")
-                }
-            }
+        //         unstash 'frontend-code'
+        //         dir('frontend') {
+        //             sh 'echo "Install dependencies" >> scan.log'
+        //             // sh 'npm install  >> scan.log'
+        //             sh 'echo "Scan started" >> scan.log'
+        //             // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+        //             slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
+        //         }
+        //         pass_alert("Scan Frontend ")
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Scan Frontend")
+        //         }
+        //     }
            
-        }
+        // }
 
         stage('Dockerize Backend') {
             environment {
@@ -270,14 +270,14 @@ pipeline {
                         --parameter-overrides ID="${BUILD_ID}"
                     
                     '''
-                    sh ''' 
-                        aws cloudformation deploy \
-                        --template-file files/frontend.yml \
-                        --tags Project=SW-project \
-                        --stack-name "SW-project-frontend-${BUILD_ID}" \
-                        --parameter-overrides ID="${BUILD_ID}"    
+                    // sh ''' 
+                    //     aws cloudformation deploy \
+                    //     --template-file files/frontend.yml \
+                    //     --tags Project=SW-project \
+                    //     --stack-name "SW-project-frontend-${BUILD_ID}" \
+                    //     --parameter-overrides ID="${BUILD_ID}"    
                     
-                    '''
+                    // '''
 
                     sh '''
                         echo "[web]" >> ansible/inventory.txt
