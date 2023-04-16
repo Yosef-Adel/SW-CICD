@@ -12,15 +12,11 @@ def destroy_environment(){
 
 
 def fail_alert(stage_name){
-
-    slackSend color: 'danger', iconEmoji: '⛔️', message:  stage_name + 'failed '
-    slackSend color: 'danger', iconEmoji: '👩‍🦯', message: 'تعبت يجدعان والله تعبت 💔'
-
+    slackSend color: 'danger', message:  stage_name + ' failed '
 }
 
 def pass_alert(stage_name){
-    slackSend color: 'good', iconEmoji: '🥱', message: stage_name +  'Completed '
-    slackSend color: 'good', iconEmoji: '👩‍🦯', message: 'اللي بعدوووووووووووووو'
+    slackSend color: 'good', message: stage_name +  ' Completed '
 }
 
 pipeline {
@@ -81,11 +77,13 @@ pipeline {
                 
                 unstash 'frontend-code'
                 dir('frontend') {
-                    sh 'ls'
-                    sh 'npm install'
-                    sh 'npm run build'
+                    sh 'echo "Install dependencies" >> build.log'
+                    sh 'npm install >> build.log'
+                    sh 'echo "Build started" >> build.log'
+                    sh 'npm run build >> build.log'
+                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
                 }
-
+                 
                 stash(name: 'frontend-build', includes: 'frontend/build/**')
                 pass_alert("Build Frontend")
             
@@ -107,8 +105,11 @@ pipeline {
                 
                 unstash 'backend-code'
                 dir('backend') {
-                    sh 'npm install '
+                    sh 'echo "Install dependencies" >> build.log'
+                    sh 'npm install >> build.log'
+                    sh 'echo "Build started" >> build.log'
                     // sh 'npm build'
+                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
                 }
                 // stash(name: 'backend-build', includes: 'backend/build**')
                 pass_alert("Build Backend")
@@ -131,8 +132,11 @@ pipeline {
                 
                 unstash 'frontend-code'
                 dir('frontend') {
-                    sh 'npm install'
-                    sh 'npm test'
+                    sh 'echo "Install dependencies" >> test.log'
+                    // sh 'npm install >> test.log'
+                    sh 'echo "Test started" >> test.log'
+                    // sh 'npm test >> test.log' 
+                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
                    
                 }
                 pass_alert("Test Frontend ")
@@ -156,8 +160,11 @@ pipeline {
                 
                 unstash 'backend-code'
                 dir('backend') {
-                    sh 'npm install'
-                    sh 'npm test '
+                    sh 'echo "Install dependencies" >> test.log'
+                    // sh 'npm install >> test.log'
+                    sh 'echo "Test started" >> test.log'
+                    // sh 'npm test >> test.log '
+                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs'
                    
                 }
                 pass_alert("Test Backend ")
@@ -181,8 +188,11 @@ pipeline {
                 
                 unstash 'backend-code'
                 dir('backend') {
-                    // sh 'npm install '
-                    // sh 'npm audit fix --audit-level=critical --force'
+                    sh 'echo "Install dependencies" >> scan.log'
+                    // sh 'npm install >> scan.log'
+                    sh 'echo "Scan started" >> scan.log'
+                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the backend scan logs'
                 }
                 pass_alert("Scan Backend ")
             }
@@ -204,8 +214,11 @@ pipeline {
                 
                 unstash 'frontend-code'
                 dir('frontend') {
-                    // sh 'npm install '
-                    // sh 'npm audit fix --audit-level=critical --force'
+                    sh 'echo "Install dependencies" >> scan.log'
+                    // sh 'npm install  >> scan.log'
+                    sh 'echo "Scan started" >> scan.log'
+                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
                 }
                 pass_alert("Scan Frontend ")
             }
