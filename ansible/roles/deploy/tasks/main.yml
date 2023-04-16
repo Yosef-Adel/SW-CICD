@@ -21,19 +21,19 @@
 
 
 - name: Pull image
-    shell: |
-      ls
-      docker-compose pull
-    
-    args:
-      chdir: ./
+  shell: |
+    ls
+    docker-compose pull
+  
+  args:
+    chdir: ./
 
 
 - name: Start application
-    shell: |
-      docker-compose up -d
-    args:
-      chdir: ./
+  shell: |
+    docker-compose up -d
+  args:
+    chdir: ./
 
 
 - name: Install NGINX
