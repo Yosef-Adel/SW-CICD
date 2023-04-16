@@ -6,23 +6,7 @@
     apt -y update
     apt -y upgrade 
 
-    
-    
 
-- name: "install dependencies."
-  become: true
-  shell: |
-    apt install curl
-    curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-    apt -y install nodejs
-
-- name: "install pm2"
-  become: true
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: present
 
 - name: "install docker."
   become: true

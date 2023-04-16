@@ -9,15 +9,25 @@
     src: artifact.tar.gz
     dest: /home/ubuntu
 
-- name: "Pull Image"
-  shell: |
-    docker pull yosefadel/sw-project-backend
 
-- name: "Start application"
-  shell: |
-    ls
-    cd server 
-    docker run -p 3000:3000 -d -v $(pwd)/.env:/app/.env yosefadel/sw-project-backend
+- copy:
+    src: roles/deploy/files/docker-compose.yml
+    dest: /home/ubuntu
+
+
+- name: Pull image
+      shell: |
+        docker-compose pull
+      args:
+        chdir: ./
+
+
+- name: Start application
+    shell: |
+      docker-compose up -d
+    args:
+      chdir: ./
+
 
 - name: Install NGINX
   become: True
