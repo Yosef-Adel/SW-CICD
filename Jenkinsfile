@@ -156,8 +156,8 @@ pipeline {
                 
                 unstash 'backend-code'
                 dir('backend') {
-                    // sh 'npm install'
-                    // sh 'npm test '
+                    sh 'npm install'
+                    sh 'npm test '
                    
                 }
                 pass_alert("Test Backend ")
