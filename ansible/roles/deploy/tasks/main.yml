@@ -16,10 +16,10 @@
 
 
 - name: Pull image
-      shell: |
-        docker-compose pull
-      args:
-        chdir: ./
+    shell: |
+      docker-compose pull
+    args:
+      chdir: ./
 
 
 - name: Start application
