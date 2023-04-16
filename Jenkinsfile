@@ -160,10 +160,9 @@ pipeline {
                 
                 unstash 'backend-code'
                 dir('backend') {
-                    sh 'echo "Install dependencies" >> test.log'
-                    sh 'npm install >> test.log'
+                    sh 'npm install'
                     sh 'echo "Test started" >> test.log'
-                    sh 'npm test >> test.log '
+                    sh 'npm test 2> test.log '
                     slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs'
                     sh 'sjhagkjshakjhsa'
                    
