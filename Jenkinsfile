@@ -280,6 +280,7 @@ pipeline {
                     // '''
 
                     sh '''
+                        rm -rf ansible/inventory.txt
                         echo "[web]" >> ansible/inventory.txt
 
                         aws ec2 describe-instances \
