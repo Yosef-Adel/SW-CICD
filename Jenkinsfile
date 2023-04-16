@@ -172,6 +172,7 @@ pipeline {
             }
             post {
                 failure {
+                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs'
                     fail_alert("Test Backend")
                 }
             }
