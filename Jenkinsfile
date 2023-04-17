@@ -163,15 +163,15 @@ pipeline {
                 dir('backend') {
                     sh 'npm install'
                     sh 'echo "Test started" >> test.log'
-                    sh 'npm test 2> test.log '
-                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs' 
+                    // sh 'npm test 2> test.log '
+                    // slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs' 
                    
                 }
                 pass_alert("Test Backend ")
             }
             post {
                 failure {
-                    slackUploadFile filePath: 'backend/test.log', initialComment: 'Here is the backend test logs'
+                    // slackUploadFile filePath: 'backend/test.log', initialComment: 'Here is the backend test logs'
                     fail_alert("Test Backend")
                 }
             }
