@@ -161,10 +161,10 @@ pipeline {
                 
                 unstash 'backend-code'
                 dir('backend') {
-                    // sh 'npm install'
-                    // sh 'echo "Test started" >> test.log'
-                    // sh 'npm test 2> test.log '
-                    // slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs'
+                    sh 'npm install'
+                    sh 'echo "Test started" >> test.log'
+                    sh 'npm test 2> test.log '
+                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs' 
                    
                 }
                 pass_alert("Test Backend ")
