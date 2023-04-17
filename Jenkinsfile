@@ -77,6 +77,7 @@ pipeline {
                 
                 unstash 'frontend-code'
                 dir('frontend') {
+                    sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
                     sh 'echo "Install dependencies" >> build.log'
                     sh 'npm install >> build.log'
                     sh 'echo "Build started" >> build.log'
@@ -280,7 +281,7 @@ pipeline {
                     '''
 
                     sh '''
-                        rm -rf ansible/inventory.txt
+                        
                         echo "[web]" >> ansible/inventory.txt
 
                         aws ec2 describe-instances \
@@ -391,7 +392,6 @@ pipeline {
                     sh 'ls'
                     dir('frontend') {
                         sh 'ls'
-                        sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
                         sh 'tar -czvf artifact-"${BUILD_ID}".tar.gz build'
                         sh 'aws s3 cp build s3://sw-project-${BUILD_ID} --recursive'
                         
@@ -504,5 +504,10 @@ pipeline {
    
 
 
+    }
+    post {
+        always {
+            deleteDir()
+        }
     }
 }
