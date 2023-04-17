@@ -281,7 +281,8 @@ pipeline {
                     '''
 
                     sh '''
-                        
+                        rm -rf ansible/inventory.txt
+
                         echo "[web]" >> ansible/inventory.txt
 
                         aws ec2 describe-instances \
@@ -357,7 +358,7 @@ pipeline {
                 sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
                 
                 dir('ansible') {
-                   
+
                     sh 'cat inventory.txt'
                     sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
                 }
@@ -505,9 +506,5 @@ pipeline {
 
 
     }
-    post {
-        always {
-            deleteDir()
-        }
-    }
+ 
 }
