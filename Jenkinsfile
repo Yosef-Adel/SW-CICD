@@ -81,7 +81,7 @@ pipeline {
                     sh 'echo "Install dependencies" >> build.log'
                     sh 'npm install >> build.log'
                     sh 'echo "Build started" >> build.log'
-                    sh 'npm run build >> build.log'
+                    sh 'npm run build '
                     slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
                 }
                  
