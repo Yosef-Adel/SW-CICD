@@ -42,39 +42,39 @@
 
 
 - name: Install Certbot and Nginx
-      apt:
-        name:
-          - certbot
-          - python3-certbot-nginx
-          - nginx
-        state: present
+  apt:
+    name:
+      - certbot
+      - python3-certbot-nginx
+      - nginx
+    state: present
 
 - name: Configure Nginx for HTTPS
-    replace:
-      path: /etc/nginx/sites-available/empressthefeeling.com 
-      regexp: '(listen 80)'
-      replace: 'listen 443 ssl'
-    notify: Restart Nginx
+  replace:
+    path: /etc/nginx/sites-available/empressthefeeling.com 
+    regexp: '(listen 80)'
+    replace: 'listen 443 ssl'
+  notify: Restart Nginx
 
 
 - name: Add HTTPS redirect to Nginx configuration
-      replace:
-        path: /etc/nginx/sites-available/empressthefeeling.com 
-        regexp: '(server_name.*;)'
-        replace: '\1\n\nif ($scheme != "https") {\n    return 301 https://$server_name$request_uri;\n}\n'
-      notify: Restart Nginx
+  replace:
+    path: /etc/nginx/sites-available/empressthefeeling.com 
+    regexp: '(server_name.*;)'
+    replace: '\1\n\nif ($scheme != "https") {\n    return 301 https://$server_name$request_uri;\n}\n'
+  notify: Restart Nginx
 
 - name: Add reverse proxy configuration to Nginx
-      replace:
-        path: /etc/nginx/sites-available/empressthefeeling.com 
-        regexp: '(location / {)'
-        replace: '\1\n    proxy_pass http://localhost:3000;'
-      notify: Restart Nginx
+  replace:
+    path: /etc/nginx/sites-available/empressthefeeling.com 
+    regexp: '(location / {)'
+    replace: '\1\n    proxy_pass http://localhost:3000;'
+  notify: Restart Nginx
 
 - name: Restart Nginx
-    systemd:
-      name: nginx
-      state: restarted
+  systemd:
+    name: nginx
+    state: restarted
 
 
 
