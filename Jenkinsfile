@@ -255,7 +255,7 @@ pipeline {
         
         stage('Deploy Infrastructure') {
               agent {
-                docker { image 'amazon/aws-cli' }
+                docker { image 'yosefadel/aws-node' }
             }
             environment {
                 AWS_DEFAULT_REGION="us-east-1"
@@ -427,7 +427,7 @@ pipeline {
         stage('Cloudfront Update') {
             agent {
                 docker {
-                    image 'amazon/aws-cli'
+                    image 'yosefadel/aws-node'
                 }
             }
             environment {
@@ -467,7 +467,7 @@ pipeline {
         stage('Cleanup') {
             agent {
                 docker {
-                    image 'amazon/aws-cli'
+                    image 'yosefadel/aws-node'
                 }
             }
             environment {
