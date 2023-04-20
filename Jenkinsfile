@@ -96,114 +96,114 @@ pipeline {
             }
         }
         
-        stage('Build Backend') {
-            agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Build Backend') {
+        //     agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'echo "Install dependencies" >> build.log'
-                    sh 'npm install >> build.log'
-                    sh 'echo "Build started" >> build.log'
-                    // sh 'npm build'
-                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
-                }
-                // stash(name: 'backend-build', includes: 'backend/build**')
-                pass_alert("Build Backend")
-            }
-            post {
-                failure {
-                    fail_alert("Build Backend")
-                }
-            }
-        }
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             sh 'echo "Install dependencies" >> build.log'
+        //             sh 'npm install >> build.log'
+        //             sh 'echo "Build started" >> build.log'
+        //             // sh 'npm build'
+        //             slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
+        //         }
+        //         // stash(name: 'backend-build', includes: 'backend/build**')
+        //         pass_alert("Build Backend")
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Build Backend")
+        //         }
+        //     }
+        // }
 
 
-        stage('Test Frontend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Test Frontend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'echo "Install dependencies" >> test.log'
-                    // sh 'npm install >> test.log'
-                    sh 'echo "Test started" >> test.log'
-                    // sh 'npm test >> test.log' 
-                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
+        //         unstash 'frontend-code'
+        //         dir('frontend') {
+        //             sh 'echo "Install dependencies" >> test.log'
+        //             // sh 'npm install >> test.log'
+        //             sh 'echo "Test started" >> test.log'
+        //             // sh 'npm test >> test.log' 
+        //             slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
                    
-                }
-                pass_alert("Test Frontend ")
+        //         }
+        //         pass_alert("Test Frontend ")
                 
-            }
-            post {
-                failure {
-                    fail_alert("Test Frontend")
-                }
-            }
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Test Frontend")
+        //         }
+        //     }
             
-        }
+        // }
         
-        stage('Test Backend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Test Backend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'npm install'
-                    sh 'echo "Test started" >> test.log'
-                    // sh 'npm test 2> test.log '
-                    // slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs' 
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             sh 'npm install'
+        //             sh 'echo "Test started" >> test.log'
+        //             // sh 'npm test 2> test.log '
+        //             // slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs' 
                    
-                }
-                pass_alert("Test Backend ")
-            }
-            post {
-                failure {
-                    // slackUploadFile filePath: 'backend/test.log', initialComment: 'Here is the backend test logs'
-                    fail_alert("Test Backend")
-                }
-            }
+        //         }
+        //         pass_alert("Test Backend ")
+        //     }
+        //     post {
+        //         failure {
+        //             // slackUploadFile filePath: 'backend/test.log', initialComment: 'Here is the backend test logs'
+        //             fail_alert("Test Backend")
+        //         }
+        //     }
           
-        }
+        // }
 
         
-        stage('Scan Backend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Scan Backend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'echo "Install dependencies" >> scan.log'
-                    // sh 'npm install >> scan.log'
-                    sh 'echo "Scan started" >> scan.log'
-                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
-                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the backend scan logs'
-                }
-                pass_alert("Scan Backend ")
-            }
-            post {
-                failure {
-                    fail_alert("Scan Backend")
-                }
-            }
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             sh 'echo "Install dependencies" >> scan.log'
+        //             // sh 'npm install >> scan.log'
+        //             sh 'echo "Scan started" >> scan.log'
+        //             // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+        //             slackUploadFile filePath: 'scan.log', initialComment: 'Here is the backend scan logs'
+        //         }
+        //         pass_alert("Scan Backend ")
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Scan Backend")
+        //         }
+        //     }
           
-        }
+        // }
         
         stage('Scan Frontend') {
              agent {
@@ -231,27 +231,27 @@ pipeline {
            
         }
 
-        stage('Dockerize Backend') {
-            environment {
-                DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-            }
-            steps {
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'docker build -t yosefadel/sw-project-backend .'
-                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
-                    sh 'docker push yosefadel/sw-project-backend'
-                }
-                pass_alert("Dockerize Backend ")
-            }
-            post {
-                failure {
-                    fail_alert("Dockerize Backend ")
-                    destroy_environment()
-                }
-            }
+        // stage('Dockerize Backend') {
+        //     environment {
+        //         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+        //     }
+        //     steps {
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             sh 'docker build -t yosefadel/sw-project-backend .'
+        //             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
+        //             sh 'docker push yosefadel/sw-project-backend'
+        //         }
+        //         pass_alert("Dockerize Backend ")
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Dockerize Backend ")
+        //             destroy_environment()
+        //         }
+        //     }
           
-        }
+        // }
         
         stage('Deploy Infrastructure') {
               agent {
@@ -263,14 +263,14 @@ pipeline {
             }
             steps {
                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    sh ''' 
-                        aws cloudformation deploy \
-                        --template-file files/backend.yml \
-                        --tags Project=SW-project \
-                        --stack-name "SW-project-backend-${BUILD_ID}" \
-                        --parameter-overrides ID="${BUILD_ID}"
+                    // sh ''' 
+                    //     aws cloudformation deploy \
+                    //     --template-file files/backend.yml \
+                    //     --tags Project=SW-project \
+                    //     --stack-name "SW-project-backend-${BUILD_ID}" \
+                    //     --parameter-overrides ID="${BUILD_ID}"
                     
-                    '''
+                    // '''
                     sh ''' 
                         aws cloudformation deploy \
                         --template-file files/frontend.yml \
@@ -280,17 +280,17 @@ pipeline {
                     
                     '''
 
-                    sh '''
-                        rm -rf ansible/inventory.txt
+                    // sh '''
+                    //     rm -rf ansible/inventory.txt
 
-                        echo "[web]" >> ansible/inventory.txt
+                    //     echo "[web]" >> ansible/inventory.txt
 
-                        aws ec2 describe-instances \
-                        --filters "Name=tag:Name,Values=backend-${BUILD_ID}" \
-                        --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                        --output text >> ansible/inventory.txt
-                    '''
-                    stash name: 'invFile', includes: 'ansible/inventory.txt'
+                    //     aws ec2 describe-instances \
+                    //     --filters "Name=tag:Name,Values=backend-${BUILD_ID}" \
+                    //     --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                    //     --output text >> ansible/inventory.txt
+                    // '''
+                    // stash name: 'invFile', includes: 'ansible/inventory.txt'
                     pass_alert("Deploy Infrastructure ")
                   
                 }
@@ -305,75 +305,75 @@ pipeline {
            
         }
         
-        stage('Configure Infrastructure') {
-             agent {
-                docker {
-                    image 'yosefadel/aws-node'
-                }
-            }
-            environment {
+        // stage('Configure Infrastructure') {
+        //      agent {
+        //         docker {
+        //             image 'yosefadel/aws-node'
+        //         }
+        //     }
+        //     environment {
                 
-                ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
-            }
-            steps {
-                unstash 'invFile'
-                dir('ansible') {
-                    sh ''' 
-                        cat inventory.txt 
-                        ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
-                    '''
-               }
-              pass_alert("Configure Infrastructure ")
-            }
-            post {
-                failure {
-                    fail_alert("Configure Infrastructure ")
-                    destroy_environment()
-                }
-            }
+        //         ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
+        //     }
+        //     steps {
+        //         unstash 'invFile'
+        //         dir('ansible') {
+        //             sh ''' 
+        //                 cat inventory.txt 
+        //                 ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY configure-server.yml
+        //             '''
+        //        }
+        //       pass_alert("Configure Infrastructure ")
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Configure Infrastructure ")
+        //             destroy_environment()
+        //         }
+        //     }
           
-        }
+        // }
         
       
 
 
-        stage('Deploy Backend') {
-             agent {
-                docker {
-                    image 'yosefadel/aws-node'
-                }
-            }
-            environment {
+        // stage('Deploy Backend') {
+        //      agent {
+        //         docker {
+        //             image 'yosefadel/aws-node'
+        //         }
+        //     }
+        //     environment {
                 
-                ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
-                ENVVAER=credentials('ENVTXTGG') 
-            }
-            steps {
-                unstash 'invFile'
-                dir('server') {
-                    sh 'cat $ENVVAER >> .env'
-                }
+        //         ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
+        //         ENVVAER=credentials('ENVTXTGG') 
+        //     }
+        //     steps {
+        //         unstash 'invFile'
+        //         dir('server') {
+        //             sh 'cat $ENVVAER >> .env'
+        //         }
 
-                sh 'tar -czf artifact.tar.gz server'
-                sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
+        //         sh 'tar -czf artifact.tar.gz server'
+        //         sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
                 
-                dir('ansible') {
+        //         dir('ansible') {
 
-                    sh 'cat inventory.txt'
-                    sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
-                }
+        //             sh 'cat inventory.txt'
+        //             sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
+        //         }
 
 
-                pass_alert("Deploy Backend ")
-            }
-            post {
-                failure {
-                    fail_alert("Deploy Backend ")
-                    destroy_environment()
-                }
-            }
+        //         pass_alert("Deploy Backend ")
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Deploy Backend ")
+        //             destroy_environment()
+        //         }
+        //     }
           
-        }
+        // }
 
 
         
