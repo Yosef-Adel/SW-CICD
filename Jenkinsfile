@@ -205,31 +205,31 @@ pipeline {
           
         // }
         
-        stage('Scan Frontend') {
-             agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
-            steps {
+        // stage('Scan Frontend') {
+        //      agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
+        //     steps {
                 
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'echo "Install dependencies" >> scan.log'
-                    // sh 'npm install  >> scan.log'
-                    sh 'echo "Scan started" >> scan.log'
-                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
-                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
-                }
-                pass_alert("Scan Frontend ")
-            }
-            post {
-                failure {
-                    fail_alert("Scan Frontend")
-                }
-            }
+        //         unstash 'frontend-code'
+        //         dir('frontend') {
+        //             sh 'echo "Install dependencies" >> scan.log'
+        //             // sh 'npm install  >> scan.log'
+        //             sh 'echo "Scan started" >> scan.log'
+        //             // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+        //             slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
+        //         }
+        //         pass_alert("Scan Frontend ")
+        //     }
+        //     post {
+        //         failure {
+        //             fail_alert("Scan Frontend")
+        //         }
+        //     }
            
-        }
+        // }
 
         stage('Dockerize Backend') {
             environment {
