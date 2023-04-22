@@ -240,7 +240,7 @@ pipeline {
                 dir('backend') {
                     sh 'docker build -t yosefadel/sw-project-backend .'
                     sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
-                    sh 'docker push --squash --progress yosefadel/sw-project-backend'
+                    sh 'docker push   yosefadel/sw-project-backend --squash --progress '
                 }
                 pass_alert("Dockerize Backend ")
             }
