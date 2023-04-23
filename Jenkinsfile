@@ -227,6 +227,9 @@ pipeline {
                 pass_alert("Scan Backend ")
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
                     fail_alert("Scan Backend")
                 }
@@ -256,6 +259,9 @@ pipeline {
                 pass_alert("Scan Frontend ")
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
                     fail_alert("Scan Frontend")
                 }
@@ -280,6 +286,9 @@ pipeline {
                 pass_alert("Dockerize Backend ")
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
                     fail_alert("Dockerize Backend ")
                     destroy_environment()
@@ -331,6 +340,9 @@ pipeline {
                 }
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
                     fail_alert("Deploy Infrastructure ")
                     destroy_environment()
@@ -361,6 +373,9 @@ pipeline {
               pass_alert("Configure Infrastructure ")
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
                     fail_alert("Configure Infrastructure ")
                     destroy_environment()
@@ -402,6 +417,9 @@ pipeline {
                 pass_alert("Deploy Backend ")
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
                     fail_alert("Deploy Backend ")
                     destroy_environment()
@@ -436,6 +454,9 @@ pipeline {
             pass_alert("Deploy Frontend  ")     
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
                     fail_alert("Deploy Frontend  ")
                     destroy_environment()
@@ -491,7 +512,11 @@ pipeline {
                 }
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
+
                     fail_alert("Deploy Frontend  ")
                     destroy_environment()
                 }
@@ -535,6 +560,12 @@ pipeline {
 
                     }
                 }
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+               
             }
         }
    
