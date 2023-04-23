@@ -34,98 +34,115 @@ pipeline {
             }
         }
 
-        stage('Source Frontend') {
-            steps {
-               dir('frontend') {
-                    checkout scmGit(branches: [[name: '*/Deployment']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
-                    
+        stage('Source Code'){
+            parallel{
+                stage('Source Frontend') {
+                    steps {
+                    dir('frontend') {
+                            checkout scmGit(branches: [[name: '*/Deployment']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
+                            
+                        }
+                        stash(name: 'frontend-code', includes: 'frontend/**')
+                        pass_alert("Source Frontend")
+                    }
+                    post {
+                        failure {
+                            fail_alert("Source Frontend")
+                        }
+                    }
                 }
-                stash(name: 'frontend-code', includes: 'frontend/**')
-                pass_alert("Source Frontend")
+                stage('Source Backend') {
+                    steps {
+
+                        dir('backend') {
+                            checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
+                            
+                        }
+                        stash(name: 'backend-code', includes: 'backend/**')
+                    pass_alert("Source Backend")
+                    }
+                    post {
+                        failure {
+                            fail_alert("Source Backend")
+                        }
+                    }
+                }
+
+
             }
-            post {
-                failure {
-                    fail_alert("Source Frontend")
+        }
+
+
+        stage('Build'){
+            parallel{
+                stage('Build Frontend') {
+                    agent {
+                        docker {
+                            image 'node:16-alpine'
+                        
+                        }
+                    }
+                    environment {
+                        HOME = '.'
+                    }
+                    steps {
+                        
+                        unstash 'frontend-code'
+                        dir('frontend') {
+                            sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
+                            sh 'echo "Install dependencies" >> build.log'
+                            sh 'npm install >> build.log'
+                            sh 'echo "Build started" >> build.log'
+                            sh 'npm run build '
+                            slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
+                        }
+                        
+                        stash(name: 'frontend-build', includes: 'frontend/build/**')
+                        pass_alert("Build Frontend")
+                    
+                    }
+                    post {
+                        failure {
+                            fail_alert("Build Frontend")
+                        }
+                    }
                 }
+
+                stage('Build Backend') {
+                    agent {
+                        docker {
+                            image 'node:16-alpine'
+                            args '-v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app'
+                        }
+                    }
+                    steps {
+                        
+                        unstash 'backend-code'
+                        dir('backend') {
+                            sh 'echo "Install dependencies" >> build.log'
+                            sh 'npm install >> build.log'
+                            sh 'echo "Build started" >> build.log'
+                            // sh 'npm build'
+                            slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
+                        }
+                        // stash(name: 'backend-build', includes: 'backend/build**')
+                        pass_alert("Build Backend")
+                    }
+                    post {
+                        failure {
+                            fail_alert("Build Backend")
+                        }
+                    }
+                }
+
+
             }
         }
         
-        stage('Source Backend') {
-            steps {
 
-                dir('backend') {
-                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
-                    
-                }
-                stash(name: 'backend-code', includes: 'backend/**')
-               pass_alert("Source Backend")
-            }
-            post {
-                failure {
-                    fail_alert("Source Backend")
-                }
-            }
-        }
-
-        stage('Build Frontend') {
-            agent {
-                docker {
-                    image 'node:16-alpine'
-                 
-                }
-            }
-            environment {
-                HOME = '.'
-            }
-            steps {
-                
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
-                    sh 'echo "Install dependencies" >> build.log'
-                    sh 'npm install >> build.log'
-                    sh 'echo "Build started" >> build.log'
-                    sh 'npm run build '
-                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
-                }
-                 
-                stash(name: 'frontend-build', includes: 'frontend/build/**')
-                pass_alert("Build Frontend")
-            
-            }
-            post {
-                failure {
-                    fail_alert("Build Frontend")
-                }
-            }
-        }
+       
         
-        stage('Build Backend') {
-            agent {
-                docker {
-                    image 'node:16-alpine'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app'
-                }
-            }
-            steps {
-                
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'echo "Install dependencies" >> build.log'
-                    sh 'npm install >> build.log'
-                    sh 'echo "Build started" >> build.log'
-                    // sh 'npm build'
-                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
-                }
-                // stash(name: 'backend-build', includes: 'backend/build**')
-                pass_alert("Build Backend")
-            }
-            post {
-                failure {
-                    fail_alert("Build Backend")
-                }
-            }
-        }
+        
 
 
         stage('Test Frontend') {
