@@ -77,9 +77,10 @@ pipeline {
                 
                 unstash 'frontend-code'
                 dir('frontend') {
-                    sh 'sudo chown -R $(whoami) ~/.npm'
-                    sh 'npm cache clean --force'
+                   
+                
                     sh ' rm -rf node_modules'
+                    sh 'npm cache clean --force'
                     sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
                     sh 'echo "Install dependencies" >> build.log'
                     sh 'npm install >> build.log'
