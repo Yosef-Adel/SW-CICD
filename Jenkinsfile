@@ -70,7 +70,7 @@ pipeline {
         stage('Build Frontend') {
             agent {
                 docker {
-                    image 'node:16.20.0'
+                    image 'node:16-alpine'
                 }
             }
             steps {
@@ -99,7 +99,7 @@ pipeline {
         stage('Build Backend') {
             agent {
                 docker {
-                    image 'node:16.20.0'
+                    image 'node:16-alpine'
                 }
             }
             steps {
@@ -126,7 +126,7 @@ pipeline {
         stage('Test Frontend') {
              agent {
                 docker {
-                    image 'node:16.20.0'
+                    image 'node:16-alpine'
                 }
             }
             steps {
@@ -154,7 +154,7 @@ pipeline {
         stage('Test Backend') {
              agent {
                 docker {
-                    image 'node:16.20.0'
+                    image 'node:16-alpine'
                 }
             }
             steps {
@@ -182,7 +182,7 @@ pipeline {
         stage('Scan Backend') {
              agent {
                 docker {
-                    image 'node:16.20.0'
+                    image 'node:16-alpine'
                 }
             }
             steps {
@@ -208,7 +208,7 @@ pipeline {
         stage('Scan Frontend') {
              agent {
                 docker {
-                    image 'node:16.20.0'
+                    image 'node:16-alpine'
                 }
             }
             steps {
