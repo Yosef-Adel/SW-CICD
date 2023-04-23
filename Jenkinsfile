@@ -115,6 +115,7 @@ pipeline {
                 
                 unstash 'backend-code'
                 dir('backend') {
+                    sh 'npm cache clean --force'
                     sh 'echo "Install dependencies" >> build.log'
                     sh 'npm install >> build.log'
                     sh 'echo "Build started" >> build.log'
