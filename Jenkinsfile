@@ -89,6 +89,9 @@ pipeline {
                 pass_alert("Build Backend")
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
                     fail_alert("Build Backend")
                 }
@@ -122,6 +125,9 @@ pipeline {
             
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
                     fail_alert("Build Frontend")
                 }
@@ -155,6 +161,9 @@ pipeline {
                 
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
                     fail_alert("Test Frontend")
                 }
@@ -184,6 +193,9 @@ pipeline {
                 pass_alert("Test Backend ")
             }
             post {
+                always {
+                    cleanWs()
+                }
                 failure {
                     // slackUploadFile filePath: 'backend/test.log', initialComment: 'Here is the backend test logs'
                     fail_alert("Test Backend")
