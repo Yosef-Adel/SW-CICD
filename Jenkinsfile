@@ -73,8 +73,6 @@ pipeline {
         }
 
 
-        stage('Build'){
-            parallel{
                 stage('Build Frontend') {
                     agent {
                         docker {
@@ -138,8 +136,6 @@ pipeline {
                 }
 
 
-            }
-        }
         
 
        
