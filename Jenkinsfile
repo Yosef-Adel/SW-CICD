@@ -68,33 +68,31 @@ pipeline {
         }
 
         stage('Build Backend') {
-                    agent {
-                        docker {
-                            image 'node:16-alpine'
-                        }
-                    }
-                    environment {
-                        HOME = '.'
-                    }
-                    steps {
-                        
-                        unstash 'backend-code'
-                        dir('backend') {
-                            sh 'npm cache clean --force'
-                            sh 'echo "Install dependencies" >> build.log'
-                            sh 'npm install >> build.log'
-                            sh 'echo "Build started" >> build.log'
-                            // sh 'npm build'
-                            slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
-                        }
-                        // stash(name: 'backend-build', includes: 'backend/build**')
-                        pass_alert("Build Backend")
-                    }
-                    post {
-                        failure {
-                            fail_alert("Build Backend")
-                        }
-                    }
+            agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            environment {
+                HOME = '.'
+            }
+            steps {
+                unstash 'backend-code'
+                dir('backend') {
+                    sh 'echo "Install dependencies" >> build.log'
+                    // sh 'npm install >> build.log'
+                    sh 'echo "Build started" >> build.log'
+                    // sh 'npm build'
+                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
+                }
+                // stash(name: 'backend-build', includes: 'backend/build**')
+                pass_alert("Build Backend")
+            }
+            post {
+                failure {
+                    fail_alert("Build Backend")
+                }
+            }
         }
 
         stage('Build Frontend') {
@@ -130,10 +128,7 @@ pipeline {
             }
         }
 
-        
-
-
-        
+    
 
 
         stage('Test Frontend') {
