@@ -112,8 +112,10 @@ pipeline {
                     agent {
                         docker {
                             image 'node:16-alpine'
-                            args '-v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app'
                         }
+                    }
+                    environment {
+                        HOME = '.'
                     }
                     steps {
                         
@@ -142,117 +144,133 @@ pipeline {
 
        
         
+        stage('Test'){
+            parallel{
+                stage('Test Frontend') {
+                    agent {
+                        docker {
+                            image 'node:16-alpine'
+                        }
+                    }
+                    environment {
+                        HOME = '.'
+                    }
+                    steps {
+                        
+                        unstash 'frontend-code'
+                        dir('frontend') {
+                            sh 'echo "Install dependencies" >> test.log'
+                            // sh 'npm install >> test.log'
+                            sh 'echo "Test started" >> test.log'
+                            // sh 'npm test >> test.log' 
+                            slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
+                        
+                        }
+                        pass_alert("Test Frontend ")
+                        
+                    }
+                    post {
+                        failure {
+                            fail_alert("Test Frontend")
+                        }
+                    }
+                    
+                }
         
+                stage('Test Backend') {
+                    agent {
+                        docker {
+                            image 'node:16-alpine'
+                        }
+                    }
+                    environment {
+                        HOME = '.'
+                    }
+                    steps {
+                        
+                        unstash 'backend-code'
+                        dir('backend') {
+                            sh 'npm install'
+                            sh 'echo "Test started" >> test.log'
+                            // sh 'npm test 2> test.log '
+                            // slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs' 
+                        
+                        }
+                        pass_alert("Test Backend ")
+                    }
+                    post {
+                        failure {
+                            // slackUploadFile filePath: 'backend/test.log', initialComment: 'Here is the backend test logs'
+                            fail_alert("Test Backend")
+                        }
+                    }
+                
+                }
+            }
+        }
 
+        stage('Scan'){
+            parallel{
+                stage('Scan Backend') {
+                    agent {
+                        docker {
+                            image 'node:16-alpine'
+                        }
+                    }
+                    environment {
+                        HOME = '.'
+                    }
+                    steps {
+                        
+                        unstash 'backend-code'
+                        dir('backend') {
+                            sh 'echo "Install dependencies" >> scan.log'
+                            // sh 'npm install >> scan.log'
+                            sh 'echo "Scan started" >> scan.log'
+                            // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+                            slackUploadFile filePath: 'scan.log', initialComment: 'Here is the backend scan logs'
+                        }
+                        pass_alert("Scan Backend ")
+                    }
+                    post {
+                        failure {
+                            fail_alert("Scan Backend")
+                        }
+                    }
+                
+                }
+                
+                stage('Scan Frontend') {
+                    agent {
+                        docker {
+                            image 'node:16-alpine'
+                        }
+                    }
+                    environment {
+                        HOME = '.'
+                    }
+                    steps {
+                        
+                        unstash 'frontend-code'
+                        dir('frontend') {
+                            sh 'echo "Install dependencies" >> scan.log'
+                            // sh 'npm install  >> scan.log'
+                            sh 'echo "Scan started" >> scan.log'
+                            // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+                            slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
+                        }
+                        pass_alert("Scan Frontend ")
+                    }
+                    post {
+                        failure {
+                            fail_alert("Scan Frontend")
+                        }
+                    }
+                
+                }
+            }
+        }
 
-        stage('Test Frontend') {
-             agent {
-                docker {
-                    image 'node:16-alpine'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app'
-                }
-            }
-            steps {
-                
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'echo "Install dependencies" >> test.log'
-                    // sh 'npm install >> test.log'
-                    sh 'echo "Test started" >> test.log'
-                    // sh 'npm test >> test.log' 
-                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
-                   
-                }
-                pass_alert("Test Frontend ")
-                
-            }
-            post {
-                failure {
-                    fail_alert("Test Frontend")
-                }
-            }
-            
-        }
-        
-        stage('Test Backend') {
-             agent {
-                docker {
-                    image 'node:16-alpine'
-                }
-            }
-            steps {
-                
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'npm install'
-                    sh 'echo "Test started" >> test.log'
-                    // sh 'npm test 2> test.log '
-                    // slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs' 
-                   
-                }
-                pass_alert("Test Backend ")
-            }
-            post {
-                failure {
-                    // slackUploadFile filePath: 'backend/test.log', initialComment: 'Here is the backend test logs'
-                    fail_alert("Test Backend")
-                }
-            }
-          
-        }
-
-        
-        stage('Scan Backend') {
-             agent {
-                docker {
-                    image 'node:16-alpine'
-                }
-            }
-            steps {
-                
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'echo "Install dependencies" >> scan.log'
-                    // sh 'npm install >> scan.log'
-                    sh 'echo "Scan started" >> scan.log'
-                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
-                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the backend scan logs'
-                }
-                pass_alert("Scan Backend ")
-            }
-            post {
-                failure {
-                    fail_alert("Scan Backend")
-                }
-            }
-          
-        }
-        
-        stage('Scan Frontend') {
-             agent {
-                docker {
-                    image 'node:16-alpine'
-                }
-            }
-            steps {
-                
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'echo "Install dependencies" >> scan.log'
-                    // sh 'npm install  >> scan.log'
-                    sh 'echo "Scan started" >> scan.log'
-                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
-                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
-                }
-                pass_alert("Scan Frontend ")
-            }
-            post {
-                failure {
-                    fail_alert("Scan Frontend")
-                }
-            }
-           
-        }
 
         stage('Dockerize Backend') {
             environment {
@@ -278,7 +296,7 @@ pipeline {
         }
         
         stage('Deploy Infrastructure') {
-              agent {
+            agent {
                 docker { image 'yosefadel/aws-node' }
             }
             environment {
