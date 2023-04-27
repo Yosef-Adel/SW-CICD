@@ -3,35 +3,25 @@
     src: roles/deploy/artifact.tar.gz
     dest: /home/ubuntu
 
-- copy:
-    src: roles/deploy/artifactback.tar.gz
-    dest: /home/ubuntu
 
 - name: Extract artifact.tar.gz to EC2 
   unarchive:
     src: artifact.tar.gz
     dest: /home/ubuntu
 
-- name: Extract artifactback.tar.gz to EC2
-  unarchive:
-    src: artifactback.tar.gz
-    dest: /home/ubuntu
 
 - copy:
-    src: roles/deploy/files/run/docker-compose.yml
+    src: roles/deploy/files/docker-compose.yml
     dest: /home/ubuntu
 
-- copy:
-    src: roles/deploy/files/build/docker-compose.yml
-    dest: /home/ubuntu/backend
 
-
-- name: build image
+- name: Pull image
   shell: |
-    cd /home/ubuntu/backend
-    docker-compose build -t sw-backend:latest backend
-  args: 
-    chdir: ./ 
+    ls
+    docker-compose pull
+  
+  args:
+    chdir: ./
 
 
 - name: Start application

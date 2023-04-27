@@ -70,12 +70,10 @@ pipeline {
         stage('Build Backend') {
             agent {
                 docker {
-                    image 'node:16-alpine'
+                    image 'node:16.20.0'
                 }
             }
-            environment {
-                HOME = '.'
-            }
+            
             steps {
                 unstash 'backend-code'
                 dir('backend') {
@@ -98,95 +96,86 @@ pipeline {
             }
         }
 
-        // stage('Build Frontend') {
-        //     agent {
-        //         docker {
-        //             image 'node:16-alpine'
+        stage('Build Frontend') {
+            agent {
+                docker {
+                    image 'node:16.20.0'
                 
-        //         }
-        //     }
-        //     environment {
-        //         HOME = '.'
-        //     }
-        //     steps {
-                
-        //         unstash 'frontend-code'
-        //         dir('frontend') {
-        //             sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
-        //             sh 'echo "Install dependencies" >> build.log'
-        //             ah 'ls'
-        //             sh 'npm install'
-        //             sh 'echo "Build started" >> build.log'
-        //             sh 'npm run build '
-        //             slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
-        //         }
-                
-        //         stash(name: 'frontend-build', includes: 'frontend/build/**')
-        //         pass_alert("Build Frontend")
+                }
+            }
             
-        //     }
-        //     post {
-        //         always {
-        //             cleanWs()
-        //         }
-        //         failure {
-        //             fail_alert("Build Frontend")
-        //         }
-        //     }
-        // }
+            steps {
+                
+                unstash 'frontend-code'
+                dir('frontend') {
+                    sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
+                    sh 'echo "Install dependencies" >> build.log'
+                    sh 'npm install >> build.log'
+                    sh 'echo "Build started" >> build.log'
+                    sh 'npm run build '
+                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
+                }
+                
+                stash(name: 'frontend-build', includes: 'frontend/build/**')
+                pass_alert("Build Frontend")
+            
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Build Frontend")
+                }
+            }
+        }
 
     
 
 
-        // stage('Test Frontend') {
-        //     agent {
-        //         docker {
-        //             image 'node:16-alpine'
-        //         }
-        //     }
-        //     environment {
-        //         HOME = '.'
-        //     }
-        //     steps {
-                
-        //         unstash 'frontend-code'
-        //         dir('frontend') {
-        //             sh 'echo "Install dependencies" >> test.log'
-        //             // sh 'npm install >> test.log'
-        //             sh 'echo "Test started" >> test.log'
-        //             // sh 'npm test >> test.log' 
-        //             slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
-                
-        //         }
-        //         pass_alert("Test Frontend ")
-                
-        //     }
-        //     post {
-        //         always {
-        //             cleanWs()
-        //         }
-        //         failure {
-        //             fail_alert("Test Frontend")
-        //         }
-        //     }
+        stage('Test Frontend') {
+            agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
             
-        // }
+            steps {
+                
+                unstash 'frontend-code'
+                dir('frontend') {
+                    sh 'echo "Install dependencies" >> test.log'
+                    // sh 'npm install >> test.log'
+                    sh 'echo "Test started" >> test.log'
+                    // sh 'npm test >> test.log' 
+                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
+                
+                }
+                pass_alert("Test Frontend ")
+                
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Test Frontend")
+                }
+            }
+            
+        }
 
         stage('Test Backend') {
             agent {
                 docker {
-                    image 'node:16-alpine'
+                    image 'node:16.20.0'
                 }
             }
-            environment {
-                HOME = '.'
-            }
+            
             steps {
                 
                 unstash 'backend-code'
                 dir('backend') {
-                    sh 'ls'
-                    sh 'npm --version'
                     sh 'npm install'
                     sh 'echo "Test started" >> test.log'
                     // sh 'npm test 2> test.log '
@@ -211,12 +200,10 @@ pipeline {
         stage('Scan Backend') {
             agent {
                 docker {
-                    image 'node:16-alpine'
+                    image 'node:16.20.0'
                 }
             }
-            environment {
-                HOME = '.'
-            }
+            
             steps {
                 
                 unstash 'backend-code'
@@ -240,65 +227,63 @@ pipeline {
         
         }
         
-        // stage('Scan Frontend') {
-        //     agent {
-        //         docker {
-        //             image 'node:16-alpine'
-        //         }
-        //     }
-        //     environment {
-        //         HOME = '.'
-        //     }
-        //     steps {
+        stage('Scan Frontend') {
+            agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            
+            steps {
                 
-        //         unstash 'frontend-code'
-        //         dir('frontend') {
-        //             sh 'echo "Install dependencies" >> scan.log'
-        //             // sh 'npm install  >> scan.log'
-        //             sh 'echo "Scan started" >> scan.log'
-        //             // sh 'npm audit fix --audit-level=critical --force >> scan.log'
-        //             slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
-        //         }
-        //         pass_alert("Scan Frontend ")
-        //     }
-        //     post {
-        //         always {
-        //             cleanWs()
-        //         }
-        //         failure {
-        //             fail_alert("Scan Frontend")
-        //         }
-        //     }
+                unstash 'frontend-code'
+                dir('frontend') {
+                    sh 'echo "Install dependencies" >> scan.log'
+                    // sh 'npm install  >> scan.log'
+                    sh 'echo "Scan started" >> scan.log'
+                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
+                }
+                pass_alert("Scan Frontend ")
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Scan Frontend")
+                }
+            }
         
-        // }
+        }
     
 
 
-        // stage('Dockerize Backend') {
-        //     environment {
-        //         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-        //     }
-        //     steps {
-        //         unstash 'backend-code'
-        //         dir('backend') {
-        //             sh 'rm -rf node_modules'
-        //             sh 'docker build -t yosefadel/sw-project-backend .'
-        //             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
-        //             sh 'docker push   yosefadel/sw-project-backend  '
-        //         }
-        //         pass_alert("Dockerize Backend ")
-        //     }
-        //     post {
-        //         always {
-        //             cleanWs()
-        //         }
-        //         failure {
-        //             fail_alert("Dockerize Backend ")
-        //             destroy_environment()
-        //         }
-        //     }
+        stage('Dockerize Backend') {
+            environment {
+                DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+            }
+            steps {
+                unstash 'backend-code'
+                dir('backend') {
+                    sh 'rm -rf node_modules'
+                    sh 'docker build -t yosefadel/sw-project-backend .'
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
+                    sh 'docker push   yosefadel/sw-project-backend  '
+                }
+                pass_alert("Dockerize Backend ")
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Dockerize Backend ")
+                    destroy_environment()
+                }
+            }
           
-        // }
+        }
         
         stage('Deploy Infrastructure') {
             agent {
@@ -318,14 +303,14 @@ pipeline {
                         --parameter-overrides ID="${BUILD_ID}"
                     
                     '''
-                    // sh ''' 
-                    //     aws cloudformation deploy \
-                    //     --template-file files/frontend.yml \
-                    //     --tags Project=SW-project \
-                    //     --stack-name "SW-project-frontend-${BUILD_ID}" \
-                    //     --parameter-overrides ID="${BUILD_ID}"    
+                    sh ''' 
+                        aws cloudformation deploy \
+                        --template-file files/frontend.yml \
+                        --tags Project=SW-project \
+                        --stack-name "SW-project-frontend-${BUILD_ID}" \
+                        --parameter-overrides ID="${BUILD_ID}"    
                     
-                    // '''
+                    '''
 
                     sh '''
                         rm -rf ansible/inventory.txt
@@ -406,14 +391,9 @@ pipeline {
                 dir('server') {
                     sh 'cat $ENVVAER >> .env'
                 }
-                dir('backend') {
-                    sh 'rm -rf node_modules'
-                }
 
                 sh 'tar -czf artifact.tar.gz server'
-                sh 'tar -czf artifactback.tar.gz backend'
                 sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
-                sh 'cp artifactback.tar.gz ansible/roles/deploy/artifactback.tar.gz'
                 
                 dir('ansible') {
 
@@ -438,39 +418,39 @@ pipeline {
 
 
         
-        // stage('Deploy Frontend') {
-        //      agent {
-        //         docker {
-        //             image 'yosefadel/aws-node'
-        //         }
-        //     }
-        //     environment {
-        //         AWS_DEFAULT_REGION="us-east-1"
+        stage('Deploy Frontend') {
+             agent {
+                docker {
+                    image 'yosefadel/aws-node'
+                }
+            }
+            environment {
+                AWS_DEFAULT_REGION="us-east-1"
                 
-        //     }
-        //     steps {
-        //         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-        //             unstash 'frontend-build'
-        //             sh 'ls'
-        //             dir('frontend') {
-        //                 sh 'ls'
-        //                 sh 'tar -czvf artifact-"${BUILD_ID}".tar.gz build'
-        //                 sh 'aws s3 cp build s3://sw-project-${BUILD_ID} --recursive'
+            }
+            steps {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    unstash 'frontend-build'
+                    sh 'ls'
+                    dir('frontend') {
+                        sh 'ls'
+                        sh 'tar -czvf artifact-"${BUILD_ID}".tar.gz build'
+                        sh 'aws s3 cp build s3://sw-project-${BUILD_ID} --recursive'
                         
-        //             }
-        //         }
-        //     pass_alert("Deploy Frontend  ")     
-        //     }
-        //     post {
-        //         always {
-        //             cleanWs()
-        //         }
-        //         failure {
-        //             fail_alert("Deploy Frontend  ")
-        //             destroy_environment()
-        //         }
-        //     }
-        // }
+                    }
+                }
+            pass_alert("Deploy Frontend  ")     
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Deploy Frontend  ")
+                    destroy_environment()
+                }
+            }
+        }
         
 
 
@@ -488,48 +468,48 @@ pipeline {
         // }
         
 
-        // stage('Cloudfront Update') {
-        //     agent {
-        //         docker {
-        //             image 'yosefadel/aws-node'
-        //         }
-        //     }
-        //     environment {
-        //         KVDB_BUCKET= credentials('KVDB_BUCKET')
-        //         AWS_DEFAULT_REGION="us-east-1"
-        //     }
-        //     steps {
-        //         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+        stage('Cloudfront Update') {
+            agent {
+                docker {
+                    image 'yosefadel/aws-node'
+                }
+            }
+            environment {
+                KVDB_BUCKET= credentials('KVDB_BUCKET')
+                AWS_DEFAULT_REGION="us-east-1"
+            }
+            steps {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     
-        //             sh ''' 
-        //                 export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name==\\`WorkflowID\\`].Value" \
-        //                     --no-paginate --output text)
+                    sh ''' 
+                        export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name==\\`WorkflowID\\`].Value" \
+                            --no-paginate --output text)
                          
-        //                  echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
-        //                  curl -k https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"
+                         echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+                         curl -k https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"
 
-        //                 '''
+                        '''
 
-        //             sh ''' 
-        //                 aws cloudformation deploy \
-        //                 --template-file files/cloudfront.yml \
-        //                 --parameter-overrides WorkflowID="${BUILD_ID}" \
-        //                 --stack-name InitialStack
-        //             '''
+                    sh ''' 
+                        aws cloudformation deploy \
+                        --template-file files/cloudfront.yml \
+                        --parameter-overrides WorkflowID="${BUILD_ID}" \
+                        --stack-name InitialStack
+                    '''
 
-        //         }
-        //     }
-        //     post {
-        //         always {
-        //             cleanWs()
-        //         }
-        //         failure {
+                }
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+                failure {
 
-        //             fail_alert("Deploy Frontend  ")
-        //             destroy_environment()
-        //         }
-        //     }
-        // }
+                    fail_alert("Deploy Frontend  ")
+                    destroy_environment()
+                }
+            }
+        }
 
 
         stage('Cleanup') {
