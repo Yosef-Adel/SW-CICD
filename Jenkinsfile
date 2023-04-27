@@ -114,7 +114,7 @@ pipeline {
                 dir('frontend') {
                     sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
                     sh 'echo "Install dependencies" >> build.log'
-                    sh 'npm install >> build.log'
+                    sh 'npm install'
                     sh 'echo "Build started" >> build.log'
                     sh 'npm run build '
                     slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
