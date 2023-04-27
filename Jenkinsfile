@@ -271,31 +271,31 @@ pipeline {
     
 
 
-        stage('Dockerize Backend') {
-            environment {
-                DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-            }
-            steps {
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'rm -rf node_modules'
-                    sh 'docker build -t yosefadel/sw-project-backend .'
-                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
-                    sh 'docker push   yosefadel/sw-project-backend  '
-                }
-                pass_alert("Dockerize Backend ")
-            }
-            post {
-                always {
-                    cleanWs()
-                }
-                failure {
-                    fail_alert("Dockerize Backend ")
-                    destroy_environment()
-                }
-            }
+        // stage('Dockerize Backend') {
+        //     environment {
+        //         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+        //     }
+        //     steps {
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             sh 'rm -rf node_modules'
+        //             sh 'docker build -t yosefadel/sw-project-backend .'
+        //             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
+        //             sh 'docker push   yosefadel/sw-project-backend  '
+        //         }
+        //         pass_alert("Dockerize Backend ")
+        //     }
+        //     post {
+        //         always {
+        //             cleanWs()
+        //         }
+        //         failure {
+        //             fail_alert("Dockerize Backend ")
+        //             destroy_environment()
+        //         }
+        //     }
           
-        }
+        // }
         
         stage('Deploy Infrastructure') {
             agent {
@@ -403,9 +403,14 @@ pipeline {
                 dir('server') {
                     sh 'cat $ENVVAER >> .env'
                 }
+                dir('backend') {
+                    sh 'rm -rf node_modules'
+                }
 
                 sh 'tar -czf artifact.tar.gz server'
+                sh 'tar -czf artifactback.tar.gz backend'
                 sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
+                sh 'cp artifactback.tar.gz ansible/roles/deploy/artifactback.tar.gz'
                 
                 dir('ansible') {
 

@@ -1,7 +1,7 @@
 version: '3'
 services:
   backend:
-    image: yosefadel/sw-project-backend
+    image: sw-backend:latest
     volumes:
       - ./server/.env:/app/.env
     ports:
