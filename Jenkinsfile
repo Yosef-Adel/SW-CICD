@@ -185,6 +185,8 @@ pipeline {
                 
                 unstash 'backend-code'
                 dir('backend') {
+                    sh 'ls'
+                    sh 'npm --version'
                     sh 'npm install'
                     sh 'echo "Test started" >> test.log'
                     // sh 'npm test 2> test.log '
