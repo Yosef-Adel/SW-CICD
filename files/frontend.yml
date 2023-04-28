@@ -11,7 +11,9 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub "sw-project-${ID}"
-      AccessControl: PublicRead
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: index.html
