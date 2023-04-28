@@ -11,24 +11,30 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub "sw-project-${ID}"
+      
       OwnershipControls:
         Rules:
           - ObjectOwnership: ObjectWriter
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: index.html
   
-  # WebsiteBucketPolicy:
-  #   Type: AWS::S3::BucketPolicy
-  #   Properties:
-  #     Bucket: !Ref 'WebsiteBucket'
-  #     PolicyDocument:
-  #       Statement:
-  #       - Sid: PublicReadForGetBucketObjects
-  #         Effect: Allow
-  #         Principal: '*'
-  #         Action: s3:GetObject
-  #         Resource: !Join ['', ['arn:aws:s3:::', !Ref 'WebsiteBucket', /*]]
+  WebsiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref 'WebsiteBucket'
+      PolicyDocument:
+        Statement:
+        - Sid: PublicReadForGetBucketObjects
+          Effect: Allow
+          Principal: '*'
+          Action: s3:GetObject
+          Resource: !Join ['', ['arn:aws:s3:::', !Ref 'WebsiteBucket', /*]]
 
 
 Outputs:
