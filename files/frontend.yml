@@ -11,7 +11,10 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub "sw-project-${ID}"
-      AccessControl: PublicRead
+      BlockPublicAccess: 
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: index.html
@@ -19,16 +22,14 @@ Resources:
   WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref WebsiteBucket
+      Bucket: !Ref 'WebsiteBucket'
       PolicyDocument:
-        Version: '2012-10-17'
         Statement:
-          - Sid: PublicReadForGetBucketObjects
-            Effect: Allow
-            Principal: '*'
-            Action:
-              - 's3:GetObject'
-            Resource: !Join ['', ['arn:aws:s3:::', !Ref WebsiteBucket, '/*']]
+        - Sid: PublicReadForGetBucketObjects
+          Effect: Allow
+          Principal: '*'
+          Action: s3:GetObject
+          Resource: !Join ['', ['arn:aws:s3:::', !Ref 'WebsiteBucket', '/*']]
 
 Outputs:
   WebsiteURL:
