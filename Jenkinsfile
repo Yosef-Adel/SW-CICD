@@ -263,14 +263,14 @@ pipeline {
             }
             steps {
                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    // sh ''' 
-                    //     aws cloudformation deploy \
-                    //     --template-file files/backend.yml \
-                    //     --tags Project=SW-project \
-                    //     --stack-name "SW-project-backend-${BUILD_ID}" \
-                    //     --parameter-overrides ID="${BUILD_ID}"
+                    sh ''' 
+                        aws cloudformation deploy \
+                        --template-file files/backend.yml \
+                        --tags Project=SW-project \
+                        --stack-name "SW-project-backend-${BUILD_ID}" \
+                        --parameter-overrides ID="${BUILD_ID}"
                     
-                    // '''
+                    '''
                     sh ''' 
                         aws cloudformation deploy \
                         --template-file files/frontend.yml \
