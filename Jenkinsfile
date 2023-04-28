@@ -38,6 +38,7 @@ pipeline {
             steps {
                dir('frontend') {
                     checkout scmGit(branches: [[name: '*/Deployment']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
+                    sh 'rm -rf .git node_modules'
                     
                 }
                 stash(name: 'frontend-code', includes: 'frontend/**')
