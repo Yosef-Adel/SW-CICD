@@ -11,7 +11,11 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub "sw-project-${ID}"
-      AccessControl: PublicRead
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: index.html
@@ -24,11 +28,12 @@ Resources:
         Statement:
         - Sid: PublicReadForGetBucketObjects
           Effect: Allow
-          Principal: '*'
+          Principal:
+            AWS: "*"
           Action: s3:GetObject
-          Resource: !Join ['', ['arn:aws:s3:::', !Ref 'WebsiteBucket', /*]]
+          Resource: !Join ['', ['arn:aws:s3:::', !Ref 'WebsiteBucket', '/*']]
 
 Outputs:
   WebsiteURL:
-    Value: !GetAtt WebsiteBucket.WebsiteURL
+    Value: !Sub "http://${WebsiteBucket}.s3-website-${AWS::Region}.amazonaws.com/"
     Description: URL for website hosted on S3
