@@ -56,7 +56,7 @@ pipeline {
 
                 dir('backend') {
                     checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
-                    
+                     sh 'rm -rf .git node_modules'
                 }
                 stash(name: 'backend-code', includes: 'backend/**')
                pass_alert("Source Backend")
