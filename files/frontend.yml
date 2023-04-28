@@ -1,5 +1,5 @@
 Description: >
-  UdaPeople frontend stack.
+  SW-project frontend stack.
 
 Parameters:
   ID:
@@ -10,11 +10,11 @@ Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "udapeople-${ID}"
+      BucketName: !Sub "sw-project-${ID}"
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
-        ErrorDocument: 404.html
+        ErrorDocument: index.html
   
   WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -32,49 +32,3 @@ Outputs:
   WebsiteURL:
     Value: !GetAtt WebsiteBucket.WebsiteURL
     Description: URL for website hosted on S3
-
-
-
-
-
-
-
-
-
-
-
-
-#Description: >
-#   SW-project frontend stack.
-
-# Parameters:
-#   ID:
-#     Description: Unique identifier.
-#     Type: String
-
-# Resources:
-#   WebsiteBucket:
-#     Type: AWS::S3::Bucket
-#     Properties:
-#       BucketName: !Sub "sw-project-${ID}"
-#       AccessControl: PublicRead
-#       WebsiteConfiguration:
-#         IndexDocument: index.html
-#         ErrorDocument: index.html
-  
-#   WebsiteBucketPolicy:
-#     Type: AWS::S3::BucketPolicy
-#     Properties:
-#       Bucket: !Ref 'WebsiteBucket'
-#       PolicyDocument:
-#         Statement:
-#         - Sid: PublicReadForGetBucketObjects
-#           Effect: Allow
-#           Principal: '*'
-#           Action: s3:GetObject
-#           Resource: !Join ['', ['arn:aws:s3:::', !Ref 'WebsiteBucket', /*]]
-
-# Outputs:
-#   WebsiteURL:
-#     Value: !GetAtt WebsiteBucket.WebsiteURL
-#     Description: URL for website hosted on S3
