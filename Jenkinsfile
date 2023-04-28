@@ -67,223 +67,223 @@ pipeline {
             }
         }
 
-        stage('Build Backend') {
-            agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
+        // stage('Build Backend') {
+        //     agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
             
-            steps {
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'echo "Install dependencies" >> build.log'
-                    // sh 'npm install >> build.log'
-                    sh 'echo "Build started" >> build.log'
-                    // sh 'npm build'
-                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
-                }
-                // stash(name: 'backend-build', includes: 'backend/build**')
-                pass_alert("Build Backend")
-            }
-            post {
-                always {
-                    cleanWs()
-                }
-                failure {
-                    fail_alert("Build Backend")
-                }
-            }
-        }
+        //     steps {
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             sh 'echo "Install dependencies" >> build.log'
+        //             // sh 'npm install >> build.log'
+        //             sh 'echo "Build started" >> build.log'
+        //             // sh 'npm build'
+        //             slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
+        //         }
+        //         // stash(name: 'backend-build', includes: 'backend/build**')
+        //         pass_alert("Build Backend")
+        //     }
+        //     post {
+        //         always {
+        //             cleanWs()
+        //         }
+        //         failure {
+        //             fail_alert("Build Backend")
+        //         }
+        //     }
+        // }
 
-        stage('Build Frontend') {
-            agent {
-                docker {
-                    image 'node:16.20.0'
+        // stage('Build Frontend') {
+        //     agent {
+        //         docker {
+        //             image 'node:16.20.0'
                 
-                }
-            }
+        //         }
+        //     }
             
-            steps {
+        //     steps {
                 
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
-                    sh 'echo "Install dependencies" >> build.log'
-                    sh 'npm install >> build.log'
-                    sh 'echo "Build started" >> build.log'
-                    sh 'npm run build '
-                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
-                }
+        //         unstash 'frontend-code'
+        //         dir('frontend') {
+        //             sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
+        //             sh 'echo "Install dependencies" >> build.log'
+        //             sh 'npm install >> build.log'
+        //             sh 'echo "Build started" >> build.log'
+        //             sh 'npm run build '
+        //             slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
+        //         }
                 
-                stash(name: 'frontend-build', includes: 'frontend/build/**')
-                pass_alert("Build Frontend")
+        //         stash(name: 'frontend-build', includes: 'frontend/build/**')
+        //         pass_alert("Build Frontend")
             
-            }
-            post {
-                always {
-                    cleanWs()
-                }
-                failure {
-                    fail_alert("Build Frontend")
-                }
-            }
-        }
+        //     }
+        //     post {
+        //         always {
+        //             cleanWs()
+        //         }
+        //         failure {
+        //             fail_alert("Build Frontend")
+        //         }
+        //     }
+        // }
 
     
 
 
-        stage('Test Frontend') {
-            agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
+        // stage('Test Frontend') {
+        //     agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
             
-            steps {
+        //     steps {
                 
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'echo "Install dependencies" >> test.log'
-                    // sh 'npm install >> test.log'
-                    sh 'echo "Test started" >> test.log'
-                    // sh 'npm test >> test.log' 
-                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
+        //         unstash 'frontend-code'
+        //         dir('frontend') {
+        //             sh 'echo "Install dependencies" >> test.log'
+        //             // sh 'npm install >> test.log'
+        //             sh 'echo "Test started" >> test.log'
+        //             // sh 'npm test >> test.log' 
+        //             slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
                 
-                }
-                pass_alert("Test Frontend ")
+        //         }
+        //         pass_alert("Test Frontend ")
                 
-            }
-            post {
-                always {
-                    cleanWs()
-                }
-                failure {
-                    fail_alert("Test Frontend")
-                }
-            }
+        //     }
+        //     post {
+        //         always {
+        //             cleanWs()
+        //         }
+        //         failure {
+        //             fail_alert("Test Frontend")
+        //         }
+        //     }
             
-        }
+        // }
 
-        stage('Test Backend') {
-            agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
+        // stage('Test Backend') {
+        //     agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
             
-            steps {
+        //     steps {
                 
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'npm install'
-                    sh 'echo "Test started" >> test.log'
-                    // sh 'npm test 2> test.log '
-                    // slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs' 
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             sh 'npm install'
+        //             sh 'echo "Test started" >> test.log'
+        //             // sh 'npm test 2> test.log '
+        //             // slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs' 
                 
-                }
-                pass_alert("Test Backend ")
-            }
-            post {
-                always {
-                    cleanWs()
-                }
-                failure {
-                    // slackUploadFile filePath: 'backend/test.log', initialComment: 'Here is the backend test logs'
-                    fail_alert("Test Backend")
-                }
-            }
+        //         }
+        //         pass_alert("Test Backend ")
+        //     }
+        //     post {
+        //         always {
+        //             cleanWs()
+        //         }
+        //         failure {
+        //             // slackUploadFile filePath: 'backend/test.log', initialComment: 'Here is the backend test logs'
+        //             fail_alert("Test Backend")
+        //         }
+        //     }
         
-        }
+        // }
       
    
-        stage('Scan Backend') {
-            agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
+        // stage('Scan Backend') {
+        //     agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
             
-            steps {
+        //     steps {
                 
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'echo "Install dependencies" >> scan.log'
-                    // sh 'npm install >> scan.log'
-                    sh 'echo "Scan started" >> scan.log'
-                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
-                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the backend scan logs'
-                }
-                pass_alert("Scan Backend ")
-            }
-            post {
-                always {
-                    cleanWs()
-                }
-                failure {
-                    fail_alert("Scan Backend")
-                }
-            }
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             sh 'echo "Install dependencies" >> scan.log'
+        //             // sh 'npm install >> scan.log'
+        //             sh 'echo "Scan started" >> scan.log'
+        //             // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+        //             slackUploadFile filePath: 'scan.log', initialComment: 'Here is the backend scan logs'
+        //         }
+        //         pass_alert("Scan Backend ")
+        //     }
+        //     post {
+        //         always {
+        //             cleanWs()
+        //         }
+        //         failure {
+        //             fail_alert("Scan Backend")
+        //         }
+        //     }
         
-        }
+        // }
         
-        stage('Scan Frontend') {
-            agent {
-                docker {
-                    image 'node:16.20.0'
-                }
-            }
+        // stage('Scan Frontend') {
+        //     agent {
+        //         docker {
+        //             image 'node:16.20.0'
+        //         }
+        //     }
             
-            steps {
+        //     steps {
                 
-                unstash 'frontend-code'
-                dir('frontend') {
-                    sh 'echo "Install dependencies" >> scan.log'
-                    // sh 'npm install  >> scan.log'
-                    sh 'echo "Scan started" >> scan.log'
-                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
-                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
-                }
-                pass_alert("Scan Frontend ")
-            }
-            post {
-                always {
-                    cleanWs()
-                }
-                failure {
-                    fail_alert("Scan Frontend")
-                }
-            }
+        //         unstash 'frontend-code'
+        //         dir('frontend') {
+        //             sh 'echo "Install dependencies" >> scan.log'
+        //             // sh 'npm install  >> scan.log'
+        //             sh 'echo "Scan started" >> scan.log'
+        //             // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+        //             slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
+        //         }
+        //         pass_alert("Scan Frontend ")
+        //     }
+        //     post {
+        //         always {
+        //             cleanWs()
+        //         }
+        //         failure {
+        //             fail_alert("Scan Frontend")
+        //         }
+        //     }
         
-        }
+        // }
     
 
 
-        stage('Dockerize Backend') {
-            environment {
-                DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-            }
-            steps {
-                unstash 'backend-code'
-                dir('backend') {
-                    sh 'rm -rf node_modules'
-                    sh 'docker build -t yosefadel/sw-project-backend .'
-                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
-                    sh 'docker push   yosefadel/sw-project-backend  '
-                }
-                pass_alert("Dockerize Backend ")
-            }
-            post {
-                always {
-                    cleanWs()
-                }
-                failure {
-                    fail_alert("Dockerize Backend ")
-                    destroy_environment()
-                }
-            }
+        // stage('Dockerize Backend') {
+        //     environment {
+        //         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+        //     }
+        //     steps {
+        //         unstash 'backend-code'
+        //         dir('backend') {
+        //             sh 'rm -rf node_modules'
+        //             sh 'docker build -t yosefadel/sw-project-backend .'
+        //             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
+        //             sh 'docker push   yosefadel/sw-project-backend  '
+        //         }
+        //         pass_alert("Dockerize Backend ")
+        //     }
+        //     post {
+        //         always {
+        //             cleanWs()
+        //         }
+        //         failure {
+        //             fail_alert("Dockerize Backend ")
+        //             destroy_environment()
+        //         }
+        //     }
           
-        }
+        // }
         
         stage('Deploy Infrastructure') {
             agent {
