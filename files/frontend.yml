@@ -14,6 +14,7 @@ Resources:
       OwnershipControls:
         Rules:
           - ObjectOwnership: ObjectWriter
+      AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: index.html
