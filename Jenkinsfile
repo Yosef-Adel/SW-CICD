@@ -68,37 +68,37 @@ pipeline {
             }
         }
 
-        // stage('Build Frontend') {
-        //     agent {
-        //         docker {
-        //             image 'node:16.20.0'
-        //         }
-        //     }
-        //     steps {
+        stage('Build Frontend') {
+            agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
                 
-        //         unstash 'frontend-code'
-        //         dir('frontend') {
-        //             sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
-        //             sh 'echo "Install dependencies" >> build.log'
-        //             sh 'npm install >> build.log'
-        //             sh 'echo "Build started" >> build.log'
-        //             sh 'npm run build '
-        //             slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
-        //         }
+                unstash 'frontend-code'
+                dir('frontend') {
+                    sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
+                    sh 'echo "Install dependencies" >> build.log'
+                    sh 'npm install >> build.log'
+                    sh 'echo "Build started" >> build.log'
+                    sh 'npm run build '
+                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the frontend logs'
+                }
                  
-        //         stash(name: 'frontend-build', includes: 'frontend/build/**')
-        //         pass_alert("Build Frontend")
+                stash(name: 'frontend-build', includes: 'frontend/build/**')
+                pass_alert("Build Frontend")
             
-        //     }
-        //     post {
-        //         always {
-        //             cleanWs()
-        //         }
-        //         failure {
-        //             fail_alert("Build Frontend")
-        //         }
-        //     }
-        // }
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Build Frontend")
+                }
+            }
+        }
         
         stage('Build Backend') {
             agent {
@@ -293,14 +293,14 @@ pipeline {
                         --parameter-overrides ID="${BUILD_ID}"
                     
                     '''
-                    // sh ''' 
-                    //     aws cloudformation deploy \
-                    //     --template-file files/frontend.yml \
-                    //     --tags Project=SW-project \
-                    //     --stack-name "SW-project-frontend-${BUILD_ID}" \
-                    //     --parameter-overrides ID="${BUILD_ID}"    
+                    sh ''' 
+                        aws cloudformation deploy \
+                        --template-file files/frontend.yml \
+                        --tags Project=SW-project \
+                        --stack-name "SW-project-frontend-${BUILD_ID}" \
+                        --parameter-overrides ID="${BUILD_ID}"    
                     
-                    // '''
+                    '''
 
                     sh '''
                         rm -rf ansible/inventory.txt

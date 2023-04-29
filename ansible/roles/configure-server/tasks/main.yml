@@ -39,12 +39,6 @@
 
 
 
-- name: Pull image
-  shell: |
-    cd /home/ubuntu/prom
-    ls
-
-
 
 # - name: Pull image
 #   shell: |
