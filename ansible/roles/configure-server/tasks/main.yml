@@ -32,3 +32,18 @@
     dest: /usr/local/bin/docker-compose
     mode: 'u+x,g+x,o+x'
 
+
+- copy:
+    src: roles/deploy/files/docker-compose.yml
+    dest: /home/ubuntu/prom
+
+- name: Pull image
+  shell: |
+    cd /home/ubuntu/prom
+    docker-compose pull
+
+- name: Start prom
+  shell: |
+    cd /home/ubuntu/prom
+    docker-compose up -d
+  

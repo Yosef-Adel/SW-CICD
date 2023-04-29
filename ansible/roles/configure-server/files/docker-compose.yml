@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    ports:
+      - 9100:9100
+    restart: always
+  docker-exporter:
+    image: prom/docker-exporter
+    container_name: docker-exporter
+    ports:
+      - 9323:9323
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
