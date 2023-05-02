@@ -1,7 +1,20 @@
+- name: Create crt Directory
+  file:
+    path: /etc/nginx/ssl
+    state: directory
+
+- copy:
+    src: roles/deploy/crt.tar.gz
+    dest: /etc/nginx/ssl
 
 - copy:
     src: roles/deploy/artifact.tar.gz
     dest: /home/ubuntu
+
+- name: Extract crt.tar.gz to EC2 
+  unarchive:
+    src: crt.tar.gz
+    dest: /etc/nginx/ssl
 
 
 - name: Extract artifact.tar.gz to EC2 
@@ -15,15 +28,6 @@
     dest: /home/ubuntu
 
 
-- name: Run command
-  shell: |
-    echo "Hello, world!"
-
-
-- name: Pull image
-  shell: |
-    ls
-    docker-compose pull
   
   args:
     chdir: ./

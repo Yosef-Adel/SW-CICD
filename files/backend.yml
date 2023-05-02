@@ -33,6 +33,10 @@ Resources:
           FromPort: 9323
           ToPort: 9323
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
 
 
 
