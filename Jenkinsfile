@@ -387,7 +387,7 @@ pipeline {
                     sh 'cat $CHAIN >> yosefadel_com_chain.crt'
                     sh 'cat $KEY >> private.key'
                     sh 'tar -czf crt.tar.gz * '
-                    sh 'cp crt.tar.gz ansible/roles/deploy/crt.tar.gz'
+                    sh 'mv crt.tar.gz ansible/roles/deploy/'
 
                 }
                 dir('ansible') {
