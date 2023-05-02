@@ -1,13 +1,13 @@
 
 server {
     listen 80;
-    server_name api.yosefadel.com www.api.yosefadel.com;
+    server_name yosefadel.com www.yosefadel.com;
     return 301 https://$server_name$request_uri;
 }
 
 server {
     listen 443 ssl;
-    server_name api.yosefadel.com www.api.yosefadel.com;
+    server_name yosefadel.com www.yosefadel.com;
     
     ssl_certificate /etc/nginx/ssl/yosefadel_com_chain.crt;
     ssl_certificate_key /etc/nginx/ssl/private.key;
