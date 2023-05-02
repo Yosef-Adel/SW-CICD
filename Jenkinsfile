@@ -381,11 +381,8 @@ pipeline {
                 sh 'tar -czf artifact.tar.gz server'
                 sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
                 
-                dir('ansible') {
+                
 
-                    sh 'cat inventory.txt'
-                    sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
-                }
                 dir('crt'){
                     sh 'cat $CHAIN >> yosefadel_com_chain.crt'
                     sh 'cat $KEY >> private.key'
@@ -393,6 +390,12 @@ pipeline {
                     sh 'cp crt.tar.gz ansible/roles/deploy/crt.tar.gz'
 
                 }
+                dir('ansible') {
+
+                    sh 'cat inventory.txt'
+                    sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
+                }
+           
 
 
                 pass_alert("Deploy Backend ")
