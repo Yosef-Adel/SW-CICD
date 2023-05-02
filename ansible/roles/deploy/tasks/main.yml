@@ -23,15 +23,18 @@
     dest: /home/ubuntu
 
 
+
 - copy:
     src: roles/deploy/files/docker-compose.yml
     dest: /home/ubuntu
 
 
-  
+- name: Pull image
+  shell: |
+    ls
+    docker-compose pull
   args:
     chdir: ./
-
 
 - name: Start application
   shell: |
