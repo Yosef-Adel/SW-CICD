@@ -30,7 +30,7 @@ Resources:
           ForwardedValues:
             QueryString: False
           TargetOriginId: webpage
-          ViewerProtocolPolicy: allow-all
+          ViewerProtocolPolicy: redirect-to-https
         CustomErrorResponses:
           - ErrorCode: 404
             ResponsePagePath: /index.html
