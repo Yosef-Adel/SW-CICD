@@ -39,6 +39,7 @@ pipeline {
             steps {
             dir('frontend') {
                     checkout scmGit(branches: [[name: '*/Deployment']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-FRNT-Project']])
+                    sh 'rm -rf .git node_modules'
                     
                 }
                 stash(name: 'frontend-code', includes: 'frontend/**')
@@ -55,7 +56,7 @@ pipeline {
 
                 dir('backend') {
                     checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-cli', url: 'https://github.com/Yosef-Adel/SW-BACKEND-Project.git']])
-                    
+                     sh 'rm -rf .git node_modules'
                 }
                 stash(name: 'backend-code', includes: 'backend/**')
             pass_alert("Source Backend")
@@ -74,6 +75,7 @@ pipeline {
         //         }
         //     }
             
+<<<<<<< HEAD
         //     steps {
         //         unstash 'backend-code'
         //         dir('backend') {
@@ -95,17 +97,82 @@ pipeline {
         //         }
         //     }
         // }
+=======
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Build Frontend")
+                }
+            }
+        }
+        
+        stage('Build Backend') {
+            agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
+                
+                unstash 'backend-code'
+                dir('backend') {
+                    sh 'echo "Install dependencies" >> build.log'
+                    sh 'npm install >> build.log'
+                    sh 'echo "Build started" >> build.log'
+                    // sh 'npm build'
+                    slackUploadFile filePath: 'build.log', initialComment: 'Here is the backend logs'
+                }
+                // stash(name: 'backend-build', includes: 'backend/build**')
+                pass_alert("Build Backend")
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Build Backend")
+                }
+            }
+        }
+>>>>>>> old-version
 
         // stage('Build Frontend') {
         //     agent {
         //         docker {
         //             image 'node:16.20.0'
                 
+<<<<<<< HEAD
         //         }
         //     }
+=======
+                unstash 'frontend-code'
+                dir('frontend') {
+                    sh 'echo "Install dependencies" >> test.log'
+                    // sh 'npm install >> test.log'
+                    sh 'echo "Test started" >> test.log'
+                    // sh 'npm test >> test.log' 
+                    slackUploadFile filePath: 'test.log', initialComment: 'Here is the frontend test logs'
+                   
+                }
+                pass_alert("Test Frontend ")
+                
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Test Frontend")
+                }
+            }
+>>>>>>> old-version
             
         //     steps {
                 
+<<<<<<< HEAD
         //         unstash 'frontend-code'
         //         dir('frontend') {
         //             sh 'echo "API_URL=http://ec2-3-219-197-102.compute-1.amazonaws.com/" >> .env'
@@ -282,6 +349,111 @@ pipeline {
         //             destroy_environment()
         //         }
         //     }
+=======
+                unstash 'backend-code'
+                dir('backend') {
+                    sh 'npm install'
+                    sh 'echo "Test started" >> test.log'
+                    // sh 'npm test 2> test.log '
+                    // slackUploadFile filePath: 'test.log', initialComment: 'Here is the backend test logs' 
+                   
+                }
+                pass_alert("Test Backend ")
+            }
+            post {
+                always {
+                    cleanWs()
+                }
+                failure {
+                    // slackUploadFile filePath: 'backend/test.log', initialComment: 'Here is the backend test logs'
+                    fail_alert("Test Backend")
+                }
+            }
+          
+        }
+
+        
+        stage('Scan Backend') {
+             agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
+                
+                unstash 'backend-code'
+                dir('backend') {
+                    sh 'echo "Install dependencies" >> scan.log'
+                    // sh 'npm install >> scan.log'
+                    sh 'echo "Scan started" >> scan.log'
+                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the backend scan logs'
+                }
+                pass_alert("Scan Backend ")
+            }
+            post {
+                 always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Scan Backend")
+                }
+            }
+          
+        }
+        
+        stage('Scan Frontend') {
+             agent {
+                docker {
+                    image 'node:16.20.0'
+                }
+            }
+            steps {
+                
+                unstash 'frontend-code'
+                dir('frontend') {
+                    sh 'echo "Install dependencies" >> scan.log'
+                    // sh 'npm install  >> scan.log'
+                    sh 'echo "Scan started" >> scan.log'
+                    // sh 'npm audit fix --audit-level=critical --force >> scan.log'
+                    slackUploadFile filePath: 'scan.log', initialComment: 'Here is the frontend scan logs'
+                }
+                pass_alert("Scan Frontend ")
+            }
+            post {
+                 always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Scan Frontend")
+                }
+            }
+           
+        }
+
+        stage('Dockerize Backend') {
+            environment {
+                DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+            }
+            steps {
+                unstash 'backend-code'
+                dir('backend') {
+                    sh 'docker build -t yosefadel/sw-project-backend .'
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR  --password-stdin'
+                    sh 'docker push yosefadel/sw-project-backend'
+                }
+                pass_alert("Dockerize Backend ")
+            }
+            post {
+                 always {
+                    cleanWs()
+                }
+                failure {
+                    fail_alert("Dockerize Backend ")
+                    destroy_environment()
+                }
+            }
+>>>>>>> old-version
           
         // }
         
@@ -384,7 +556,9 @@ pipeline {
             environment {
                 
                 ANSIBLE_PRIVATE_KEY=credentials('ansible-private-key')
-                ENVVAER=credentials('ENVTXTGG') 
+                ENVVAER=credentials('ENVTXTGG')
+                CHAIN=credentials('crt_chain')
+                KEY=credentials('crt_key')
             }
             steps {
                 unstash 'invFile'
@@ -395,11 +569,21 @@ pipeline {
                 sh 'tar -czf artifact.tar.gz server'
                 sh 'cp artifact.tar.gz ansible/roles/deploy/artifact.tar.gz'
                 
+                
+
+                dir('crt'){
+                    sh 'cat $CHAIN >> yosefadel_com_chain.crt'
+                    sh 'cat $KEY >> private.key'
+                    sh 'tar -czf crt.tar.gz * '
+                    sh 'cp crt.tar.gz ../ansible/roles/deploy/crt.tar.gz'
+
+                }
                 dir('ansible') {
 
                     sh 'cat inventory.txt'
                     sh 'ansible-playbook -i inventory.txt --private-key=$ANSIBLE_PRIVATE_KEY deploy-backend.yml'
                 }
+           
 
 
                 pass_alert("Deploy Backend ")
@@ -415,7 +599,6 @@ pipeline {
             }
           
         }
-
 
         
         stage('Deploy Frontend') {
@@ -456,18 +639,6 @@ pipeline {
 
 
 
-
-        // stage('Smoke Test') {
-        //     steps {
-        //         // add commands to run smoke test
-        //     }
-        //     dependencies {
-        //         stage('Deploy Backend')
-        //         stage('Deploy Frontend')
-        //     }
-        // }
-        
-
         stage('Cloudfront Update') {
             agent {
                 docker {
@@ -494,7 +665,7 @@ pipeline {
                         aws cloudformation deploy \
                         --template-file files/cloudfront.yml \
                         --parameter-overrides WorkflowID="${BUILD_ID}" \
-                        --stack-name InitialStack
+                        --stack-name InitialStack-2
                     '''
 
                 }

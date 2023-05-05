@@ -24,7 +24,6 @@
 
 
 
-
 - name: Install docker-compose
   remote_user: ubuntu
   get_url: 
@@ -32,3 +31,22 @@
     dest: /usr/local/bin/docker-compose
     mode: 'u+x,g+x,o+x'
 
+- name: Create prom Directory
+  file:
+    path: /home/ubuntu/prom
+    state: directory
+
+- copy:
+    src: roles/configure-server/files/docker-compose.yml
+    dest: /home/ubuntu/prom
+
+- name: Pull image
+  shell: |
+    cd /home/ubuntu/prom
+    docker-compose pull
+
+- name: Start prom
+  shell: |
+    cd /home/ubuntu/prom
+    docker-compose up -d
+  
