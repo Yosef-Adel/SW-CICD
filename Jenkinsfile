@@ -471,7 +471,7 @@ pipeline {
                         aws cloudformation deploy \
                         --template-file files/cloudfront.yml \
                         --parameter-overrides WorkflowID="${BUILD_ID}" \
-                        --stack-name InitialStack-2
+                        --stack-name InitialStack
                     '''
 
                 }
